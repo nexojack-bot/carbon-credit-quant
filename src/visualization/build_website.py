@@ -131,37 +131,55 @@ def build_dashboard_html(
     font-weight: 600;
     margin: 0 0 0.5em 0;
   }}
-  .wrap {{ max-width: 980px; margin: 0 auto; padding: 48px 24px 96px; }}
-  header {{ border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 40px; }}
-  header h1 {{ font-size: 28px; letter-spacing: -0.01em; }}
-  header p {{ color: var(--text-muted); margin: 4px 0 0; font-size: 13px; }}
+  .wrap {{ max-width: 980px; margin: 0 auto; padding: 56px 24px 120px; }}
+  header {{ border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 56px; }}
+  header h1 {{ font-size: 30px; letter-spacing: -0.01em; }}
+  header p {{ color: var(--text-muted); margin: 6px 0 0; font-size: 13px; }}
 
-  .stats {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 40px; }}
-  .stat {{ background: var(--surface); padding: 20px; }}
-  .stat .n {{ font-size: 28px; font-weight: 600; }}
-  .stat .label {{ color: var(--text-muted); font-size: 12px; margin-top: 4px; }}
+  .stats {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 56px; }}
+  .stat {{ background: var(--surface); padding: 24px 20px; }}
+  .stat .n {{ font-size: 34px; font-weight: 600; font-variant-numeric: tabular-nums; }}
+  .stat .label {{ color: var(--text-muted); font-size: 12px; margin-top: 6px; }}
   .stat.under .n {{ color: var(--under); }}
   .stat.over .n {{ color: var(--over); }}
 
-  .caution {{ border: 1px solid var(--border); border-left: 3px solid var(--over); padding: 16px 20px; margin-bottom: 40px; background: var(--surface); }}
-  .caution h3 {{ font-size: 14px; font-family: 'IBM Plex Mono', monospace; font-weight: 600; margin-bottom: 8px; }}
+  .caution {{ border: 1px solid var(--border); border-left: 3px solid var(--over); padding: 18px 22px; margin-bottom: 56px; background: var(--surface); }}
+  .caution h3 {{ font-size: 14px; font-family: 'IBM Plex Mono', monospace; font-weight: 600; margin-bottom: 10px; }}
   .caution p {{ color: var(--text-muted); margin: 0 0 8px; font-size: 13px; }}
   .caution p:last-child {{ margin-bottom: 0; }}
 
-  section {{ margin-bottom: 48px; }}
-  section > h2 {{ font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; }}
+  section {{ margin-bottom: 64px; }}
+  section > h2 {{ font-size: 20px; border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 24px; }}
+  section > .section-note {{ color: var(--text-muted); font-size: 12px; margin: -16px 0 20px; }}
 
-  .outlier-card {{ border: 1px solid var(--border); padding: 16px 20px; margin-bottom: 12px; }}
-  .outlier-card .head {{ display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }}
+  .outlier-card {{ border: 1px solid var(--border); padding: 18px 22px; margin-bottom: 14px; }}
+  .outlier-card .head {{ display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }}
   .outlier-card .pid {{ font-weight: 600; font-size: 15px; }}
   .outlier-card .cls {{ font-size: 12px; }}
   .outlier-card .cls.over {{ color: var(--over); }}
   .outlier-card .cls.under {{ color: var(--under); }}
   .outlier-card .detail {{ color: var(--text-muted); font-size: 13px; }}
 
+  .notable-grid {{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }}
+  .notable-card {{ border: 1px solid var(--border); padding: 14px 16px; }}
+  .notable-card .row1 {{ display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }}
+  .notable-card .pid {{ font-weight: 600; font-size: 14px; }}
+  .notable-card .z {{ font-size: 13px; font-variant-numeric: tabular-nums; }}
+  .notable-card .z.under {{ color: var(--under); }}
+  .notable-card .z.over {{ color: var(--over); }}
+  .notable-card .price-line {{ color: var(--text-muted); font-size: 12px; }}
+
+  .table-controls {{ display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }}
+  .table-controls input {{ background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 8px 12px; flex: 1; }}
+  .table-controls input:focus {{ outline: none; border-color: var(--under); }}
+  .toggle-btn {{ background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 10px 16px; cursor: pointer; }}
+  .toggle-btn:hover {{ border-color: var(--under); }}
+
   table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
-  th {{ text-align: left; color: var(--text-muted); font-weight: 500; font-size: 11px; text-transform: none; padding: 8px 12px; border-bottom: 1px solid var(--border); }}
-  td {{ padding: 8px 12px; border-bottom: 1px solid var(--border); }}
+  th {{ text-align: left; color: var(--text-muted); font-weight: 500; font-size: 11px; text-transform: none; padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }}
+  th:hover {{ color: var(--text); }}
+  th.num {{ text-align: right; }}
+  td {{ padding: 10px 12px; border-bottom: 1px solid var(--border); }}
   tr:hover td {{ background: var(--surface); }}
   .num {{ text-align: right; font-variant-numeric: tabular-nums; }}
   .tag {{ display: inline-block; padding: 2px 8px; border: 1px solid var(--border); font-size: 11px; }}
@@ -169,16 +187,17 @@ def build_dashboard_html(
   .tag.over {{ color: var(--over); border-color: var(--over); }}
   .tag.fair {{ color: var(--fair); border-color: var(--fair); }}
 
-  .chart-box {{ border: 1px solid var(--border); padding: 20px; margin-bottom: 20px; }}
+  .chart-box {{ border: 1px solid var(--border); padding: 24px; margin-bottom: 20px; }}
   .chart-box h3 {{ font-size: 14px; margin-bottom: 4px; }}
-  .chart-box .note {{ color: var(--text-muted); font-size: 12px; margin-bottom: 16px; }}
+  .chart-box .note {{ color: var(--text-muted); font-size: 12px; margin-bottom: 20px; }}
   canvas {{ max-height: 320px; }}
 
-  footer {{ border-top: 1px solid var(--border); padding-top: 20px; color: var(--text-muted); font-size: 12px; }}
+  footer {{ border-top: 1px solid var(--border); padding-top: 24px; color: var(--text-muted); font-size: 12px; }}
   footer a {{ color: var(--under); }}
 
   @media (max-width: 640px) {{
     .stats {{ grid-template-columns: repeat(2, 1fr); }}
+    .notable-grid {{ grid-template-columns: 1fr; }}
   }}
 </style>
 </head>
@@ -228,20 +247,32 @@ def build_dashboard_html(
 </section>
 
 <section>
+  <h2>Most notable credits</h2>
+  <div class="section-note">The 8 largest deviations from fair value. Full table below.</div>
+  <div class="notable-grid" id="notable-grid"></div>
+</section>
+
+<section>
   <h2>Full ranked table</h2>
-  <table id="ranked-table">
-    <thead>
-      <tr>
-        <th>Project</th>
-        <th class="num">Observed</th>
-        <th class="num">Hedonic model</th>
-        <th class="num">Comparable model</th>
-        <th class="num">z-score</th>
-        <th>Classification</th>
-      </tr>
-    </thead>
-    <tbody id="ranked-tbody"></tbody>
-  </table>
+  <button class="toggle-btn" id="toggle-table">Show all <span id="toggle-count"></span> credits</button>
+  <div id="table-wrap" style="display:none; margin-top: 20px;">
+    <div class="table-controls">
+      <input type="text" id="table-search" placeholder="Search by project ID...">
+    </div>
+    <table id="ranked-table">
+      <thead>
+        <tr>
+          <th data-key="project_id">Project</th>
+          <th class="num" data-key="observed_price">Observed</th>
+          <th class="num" data-key="hedonic_model_price">Hedonic model</th>
+          <th class="num" data-key="comparable_model_price">Comparable model</th>
+          <th class="num" data-key="combined_zscore">z-score</th>
+          <th data-key="classification">Classification</th>
+        </tr>
+      </thead>
+      <tbody id="ranked-tbody"></tbody>
+    </table>
+  </div>
 </section>
 
 <footer>
@@ -262,12 +293,31 @@ function tagClass(classification) {{
 document.getElementById('run-meta').textContent =
   `${{DATA.nTotal}} credits scored · registries covered: ${{DATA.registries.join(', ')}} · run at ${{DATA.runTimestamp}}`;
 
+// One deliberate motion moment: the four hero stats count up on load,
+// rather than animating everything on the page. Respects reduced-motion.
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function countUp(el, target, duration = 700) {{
+  if (prefersReducedMotion || target === 0) {{ el.textContent = target; return; }}
+  const start = performance.now();
+  function tick(now) {{
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target);
+    if (progress < 1) requestAnimationFrame(tick);
+  }}
+  requestAnimationFrame(tick);
+}}
+
 document.getElementById('stats-row').innerHTML = `
-  <div class="stat"><div class="n">${{DATA.nTotal}}</div><div class="label">credits priced &amp; scored</div></div>
-  <div class="stat under"><div class="n">${{DATA.nUndervalued}}</div><div class="label">potentially undervalued</div></div>
-  <div class="stat"><div class="n">${{DATA.nFair}}</div><div class="label">fair value range</div></div>
-  <div class="stat over"><div class="n">${{DATA.nOvervalued}}</div><div class="label">potentially overvalued</div></div>
+  <div class="stat"><div class="n" id="stat-total">0</div><div class="label">credits priced &amp; scored</div></div>
+  <div class="stat under"><div class="n" id="stat-under">0</div><div class="label">potentially undervalued</div></div>
+  <div class="stat"><div class="n" id="stat-fair">0</div><div class="label">fair value range</div></div>
+  <div class="stat over"><div class="n" id="stat-over">0</div><div class="label">potentially overvalued</div></div>
 `;
+countUp(document.getElementById('stat-total'), DATA.nTotal);
+countUp(document.getElementById('stat-under'), DATA.nUndervalued);
+countUp(document.getElementById('stat-fair'), DATA.nFair);
+countUp(document.getElementById('stat-over'), DATA.nOvervalued);
 
 const rsq = DATA.diagnostics.r_squared;
 const condNum = DATA.diagnostics.condition_number;
@@ -293,17 +343,72 @@ if (DATA.outliers.length === 0) {{
   `).join('');
 }}
 
-const tbody = document.getElementById('ranked-tbody');
-tbody.innerHTML = DATA.rankedTable.map(r => `
-  <tr>
-    <td>${{r.project_id}}</td>
-    <td class="num">$${{r.observed_price.toFixed(2)}}</td>
-    <td class="num">$${{r.hedonic_model_price.toFixed(2)}}</td>
-    <td class="num">$${{r.comparable_model_price.toFixed(2)}}</td>
-    <td class="num">${{r.combined_zscore.toFixed(2)}}</td>
-    <td><span class="tag ${{tagClass(r.classification)}}">${{r.classification}}</span></td>
-  </tr>
+// Notable credits: the 8 largest deviations from fair value, shown as
+// compact cards — this is what most people actually want to scan first,
+// rather than parsing a 50-row table for the interesting rows themselves.
+const notable = [...DATA.rankedTable]
+  .sort((a, b) => Math.abs(b.combined_zscore) - Math.abs(a.combined_zscore))
+  .slice(0, 8);
+document.getElementById('notable-grid').innerHTML = notable.map(r => `
+  <div class="notable-card">
+    <div class="row1">
+      <span class="pid">${{r.project_id}}</span>
+      <span class="z ${{tagClass(r.classification)}}">${{r.combined_zscore.toFixed(2)}}</span>
+    </div>
+    <div class="price-line">$${{r.observed_price.toFixed(2)}} observed vs. $${{r.hedonic_model_price.toFixed(2)}} model</div>
+  </div>
 `).join('');
+
+// Full table: hidden by default, toggled open, searchable, sortable by
+// clicking a header. This is the progressive-disclosure fix for density —
+// the data is all still here, just not forced on screen at once.
+const toggleBtn = document.getElementById('toggle-table');
+const tableWrap = document.getElementById('table-wrap');
+document.getElementById('toggle-count').textContent = DATA.nTotal;
+let tableOpen = false;
+toggleBtn.addEventListener('click', () => {{
+  tableOpen = !tableOpen;
+  tableWrap.style.display = tableOpen ? 'block' : 'none';
+  toggleBtn.textContent = tableOpen ? 'Hide table' : `Show all ${{DATA.nTotal}} credits`;
+}});
+
+let currentSort = {{ key: 'combined_zscore', dir: 1 }};
+let currentFilter = '';
+
+function renderTable() {{
+  let rows = DATA.rankedTable.filter(r => r.project_id.toLowerCase().includes(currentFilter));
+  rows.sort((a, b) => {{
+    const av = a[currentSort.key], bv = b[currentSort.key];
+    if (typeof av === 'string') return av.localeCompare(bv) * currentSort.dir;
+    return (av - bv) * currentSort.dir;
+  }});
+  const tbody = document.getElementById('ranked-tbody');
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td>${{r.project_id}}</td>
+      <td class="num">$${{r.observed_price.toFixed(2)}}</td>
+      <td class="num">$${{r.hedonic_model_price.toFixed(2)}}</td>
+      <td class="num">$${{r.comparable_model_price.toFixed(2)}}</td>
+      <td class="num">${{r.combined_zscore.toFixed(2)}}</td>
+      <td><span class="tag ${{tagClass(r.classification)}}">${{r.classification}}</span></td>
+    </tr>
+  `).join('');
+}}
+renderTable();
+
+document.getElementById('table-search').addEventListener('input', (e) => {{
+  currentFilter = e.target.value.toLowerCase();
+  renderTable();
+}});
+
+document.querySelectorAll('#ranked-table th[data-key]').forEach(th => {{
+  th.addEventListener('click', () => {{
+    const key = th.dataset.key;
+    currentSort.dir = (currentSort.key === key) ? -currentSort.dir : 1;
+    currentSort.key = key;
+    renderTable();
+  }});
+}});
 
 Chart.defaults.color = '#9BA89E';
 Chart.defaults.font.family = "'IBM Plex Mono', monospace";
