@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carbon credit relative-value ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #14201A;
+    --surface: #1C2B22;
+    --border: #2E3F34;
+    --text: #E8E4D6;
+    --text-muted: #9BA89E;
+    --under: #7FA88C;
+    --over: #C97452;
+    --fair: #A89B7E;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+  }
+  h1, h2, h3 {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    margin: 0 0 0.5em 0;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 48px 24px 96px; }
+  header { border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 40px; }
+  header h1 { font-size: 28px; letter-spacing: -0.01em; }
+  header p { color: var(--text-muted); margin: 4px 0 0; font-size: 13px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 40px; }
+  .stat { background: var(--surface); padding: 20px; }
+  .stat .n { font-size: 28px; font-weight: 600; }
+  .stat .label { color: var(--text-muted); font-size: 12px; margin-top: 4px; }
+  .stat.under .n { color: var(--under); }
+  .stat.over .n { color: var(--over); }
+
+  .caution { border: 1px solid var(--border); border-left: 3px solid var(--over); padding: 16px 20px; margin-bottom: 40px; background: var(--surface); }
+  .caution h3 { font-size: 14px; font-family: 'IBM Plex Mono', monospace; font-weight: 600; margin-bottom: 8px; }
+  .caution p { color: var(--text-muted); margin: 0 0 8px; font-size: 13px; }
+  .caution p:last-child { margin-bottom: 0; }
+
+  section { margin-bottom: 48px; }
+  section > h2 { font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; }
+
+  .outlier-card { border: 1px solid var(--border); padding: 16px 20px; margin-bottom: 12px; }
+  .outlier-card .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .outlier-card .pid { font-weight: 600; font-size: 15px; }
+  .outlier-card .cls { font-size: 12px; }
+  .outlier-card .cls.over { color: var(--over); }
+  .outlier-card .cls.under { color: var(--under); }
+  .outlier-card .detail { color: var(--text-muted); font-size: 13px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--text-muted); font-weight: 500; font-size: 11px; text-transform: none; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: var(--surface); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .tag { display: inline-block; padding: 2px 8px; border: 1px solid var(--border); font-size: 11px; }
+  .tag.under { color: var(--under); border-color: var(--under); }
+  .tag.over { color: var(--over); border-color: var(--over); }
+  .tag.fair { color: var(--fair); border-color: var(--fair); }
+
+  .chart-box { border: 1px solid var(--border); padding: 20px; margin-bottom: 20px; }
+  .chart-box h3 { font-size: 14px; margin-bottom: 4px; }
+  .chart-box .note { color: var(--text-muted); font-size: 12px; margin-bottom: 16px; }
+  canvas { max-height: 320px; }
+
+  footer { border-top: 1px solid var(--border); padding-top: 20px; color: var(--text-muted); font-size: 12px; }
+  footer a { color: var(--under); }
+
+  @media (max-width: 640px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Carbon credit relative-value ledger</h1>
+  <p id="run-meta"></p>
+</header>
+
+<div class="stats" id="stats-row"></div>
+
+<div class="caution">
+  <h3>Read this before the table below</h3>
+  <p id="caution-text"></p>
+  <p>Every classification here means "potentially" mispriced relative to a small comparable set — not a confirmed arbitrage opportunity. See the full research log in the repository for how each model and threshold was chosen.</p>
+</div>
+
+<section id="outliers-section">
+  <h2>Flagged discrepancies</h2>
+  <div id="outliers-container"></div>
+</section>
+
+<section>
+  <h2>Price distribution by registry</h2>
+  <div class="chart-box">
+    <div class="note">Where price data actually exists right now — coverage may be concentrated in one registry.</div>
+    <canvas id="chart-registry"></canvas>
+  </div>
+</section>
+
+<section>
+  <h2>Model fit: actual vs. model-implied price</h2>
+  <div class="chart-box">
+    <div class="note">Points far from the diagonal are the large-residual credits driving the relative-value flags.</div>
+    <canvas id="chart-fit"></canvas>
+  </div>
+</section>
+
+<section>
+  <h2>Residual distribution</h2>
+  <div class="chart-box">
+    <div class="note">Should be roughly symmetric around zero. Skew here is real information about model reliability, not noise to ignore.</div>
+    <canvas id="chart-residuals"></canvas>
+  </div>
+</section>
+
+<section>
+  <h2>Full ranked table</h2>
+  <table id="ranked-table">
+    <thead>
+      <tr>
+        <th>Project</th>
+        <th class="num">Observed</th>
+        <th class="num">Hedonic model</th>
+        <th class="num">Comparable model</th>
+        <th class="num">z-score</th>
+        <th>Classification</th>
+      </tr>
+    </thead>
+    <tbody id="ranked-tbody"></tbody>
+  </table>
+</section>
+
+<footer>
+  Generated from a real pipeline run — see <code>docs/research_decisions_log.md</code> for methodology, known limitations, and what each modelling decision traded off. Not investment advice.
+</footer>
+
+</div>
+
+<script>
+const DATA = {"runTimestamp": "2026-09-03T04:23:16.283280", "nTotal": 51, "nUndervalued": 6, "nOvervalued": 6, "nFair": 39, "registries": ["verra"], "diagnostics": {"r_squared": 0.4608, "adj_r_squared": 0.3425, "n_obs": 51, "condition_number": 465036.0987, "residual_mean": -0.0, "residual_std": 0.6283, "residual_skew": 1.933, "multicollinearity_flag": true}, "rankedTable": [{"project_id": "VCS191", "observed_price": 0.14, "hedonic_model_price": 0.3986696518, "comparable_model_price": 0.84, "combined_zscore": -1.9523900681, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS985", "observed_price": 1.4, "hedonic_model_price": 3.3103363467, "comparable_model_price": 5.096, "combined_zscore": -1.4940006276, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS784", "observed_price": 0.406, "hedonic_model_price": 1.1039796851, "comparable_model_price": 0.91, "combined_zscore": -1.3040002504, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS836", "observed_price": 0.28, "hedonic_model_price": 0.6766903919, "comparable_model_price": 0.7, "combined_zscore": -1.2780136349, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS1883", "observed_price": 1.05, "hedonic_model_price": 2.1427322362, "comparable_model_price": 2.8, "combined_zscore": -1.1835159121, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS426", "observed_price": 0.77, "hedonic_model_price": 2.0490539126, "comparable_model_price": 1.26, "combined_zscore": -1.0913960458, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS1052", "observed_price": 1.82, "hedonic_model_price": 3.3263508855, "comparable_model_price": 3.22, "combined_zscore": -0.8409236692, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS2098", "observed_price": 0.728, "hedonic_model_price": 1.2014659286, "comparable_model_price": 1.4, "combined_zscore": -0.8115177141, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1580", "observed_price": 0.84, "hedonic_model_price": 1.4102375704, "comparable_model_price": 1.4, "combined_zscore": -0.7362460949, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1718", "observed_price": 0.798, "hedonic_model_price": 1.1894205125, "comparable_model_price": 1.4, "combined_zscore": -0.6734149334, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1578", "observed_price": 0.91, "hedonic_model_price": 1.4016901325, "comparable_model_price": 1.4, "combined_zscore": -0.6179936682, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS981", "observed_price": 2.8, "hedonic_model_price": 3.5122863451, "comparable_model_price": 5.096, "combined_zscore": -0.5589836875, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS766", "observed_price": 0.686, "hedonic_model_price": 0.7467290985, "comparable_model_price": 1.4, "combined_zscore": -0.5172608859, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS566", "observed_price": 0.7, "hedonic_model_price": 0.9379107894, "comparable_model_price": 0.98, "combined_zscore": -0.448470519, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS786", "observed_price": 1.232, "hedonic_model_price": 2.056589511, "comparable_model_price": 1.26, "combined_zscore": -0.4283560888, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS929", "observed_price": 1.26, "hedonic_model_price": 2.0803955515, "comparable_model_price": 1.232, "combined_zscore": -0.3917123895, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS631", "observed_price": 0.77, "hedonic_model_price": 0.9402640243, "comparable_model_price": 0.98, "combined_zscore": -0.3154169627, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1356", "observed_price": 0.686, "hedonic_model_price": 0.6630825513, "comparable_model_price": 0.98, "combined_zscore": -0.2011652886, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS986", "observed_price": 0.728, "hedonic_model_price": 0.8184553091, "comparable_model_price": 0.84, "combined_zscore": -0.1887328795, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS850", "observed_price": 0.686, "hedonic_model_price": 0.6815448595, "comparable_model_price": 0.91, "combined_zscore": -0.176984563, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS498", "observed_price": 0.91, "hedonic_model_price": 1.0047605862, "comparable_model_price": 0.98, "combined_zscore": -0.1315066523, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1205", "observed_price": 0.77, "hedonic_model_price": 0.838847344, "comparable_model_price": 0.84, "combined_zscore": -0.1288415699, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS849", "observed_price": 0.7, "hedonic_model_price": 0.6640068369, "comparable_model_price": 0.77, "combined_zscore": -0.0238438339, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS896", "observed_price": 0.7, "hedonic_model_price": 0.6805607406, "comparable_model_price": 0.728, "combined_zscore": -0.0085974738, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1427", "observed_price": 0.84, "hedonic_model_price": 0.8382722613, "comparable_model_price": 0.84, "combined_zscore": -0.0050070368, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS917", "observed_price": 0.84, "hedonic_model_price": 0.8374953568, "comparable_model_price": 0.84, "combined_zscore": -0.0042691985, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1100", "observed_price": 0.84, "hedonic_model_price": 0.8369021585, "comparable_model_price": 0.84, "combined_zscore": -0.0037053678, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1195", "observed_price": 0.98, "hedonic_model_price": 0.9736192028, "comparable_model_price": 0.98, "combined_zscore": -0.0014473575, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1525", "observed_price": 0.98, "hedonic_model_price": 0.9704091351, "comparable_model_price": 0.98, "combined_zscore": 0.0011806059, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1464", "observed_price": 0.84, "hedonic_model_price": 0.83084576, "comparable_model_price": 0.84, "combined_zscore": 0.0020741722, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS708", "observed_price": 0.728, "hedonic_model_price": 0.6875206745, "comparable_model_price": 0.77, "combined_zscore": 0.0040373609, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1190", "observed_price": 1.008, "hedonic_model_price": 0.9932598936, "comparable_model_price": 0.98, "combined_zscore": 0.022575915, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS655", "observed_price": 0.98, "hedonic_model_price": 0.9405454976, "comparable_model_price": 0.98, "combined_zscore": 0.0260539981, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS391", "observed_price": 0.868, "hedonic_model_price": 0.8034560291, "comparable_model_price": 0.826, "combined_zscore": 0.0856500972, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1758", "observed_price": 0.896, "hedonic_model_price": 0.8353301999, "comparable_model_price": 0.84, "combined_zscore": 0.0892371043, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1174", "observed_price": 0.826, "hedonic_model_price": 0.7970512199, "comparable_model_price": 0.728, "combined_zscore": 0.1001942935, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1258", "observed_price": 1.19, "hedonic_model_price": 1.2094627673, "comparable_model_price": 0.98, "combined_zscore": 0.1010502034, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS10", "observed_price": 0.77, "hedonic_model_price": 0.66636989, "comparable_model_price": 0.7, "combined_zscore": 0.167581315, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1547", "observed_price": 1.4, "hedonic_model_price": 1.1712849136, "comparable_model_price": 0.91, "combined_zscore": 0.4028854885, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS817", "observed_price": 0.7, "hedonic_model_price": 0.3741057248, "comparable_model_price": 0.7, "combined_zscore": 0.49192605, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS476", "observed_price": 0.7, "hedonic_model_price": 0.3705083428, "comparable_model_price": 0.7, "combined_zscore": 0.4996149822, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS2026", "observed_price": 0.98, "hedonic_model_price": 0.5820038468, "comparable_model_price": 0.84, "combined_zscore": 0.5037557797, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS292", "observed_price": 1.456, "hedonic_model_price": 0.9356981393, "comparable_model_price": 0.77, "combined_zscore": 0.7409252747, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1140", "observed_price": 1.4, "hedonic_model_price": 0.7756140904, "comparable_model_price": 0.84, "combined_zscore": 0.7806160165, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1146", "observed_price": 3.22, "hedonic_model_price": 2.1681892845, "comparable_model_price": 1.4, "combined_zscore": 0.8254487127, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1650", "observed_price": 5.6, "hedonic_model_price": 3.3209881912, "comparable_model_price": 1.82, "combined_zscore": 1.107296549, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS674", "observed_price": 7.0, "hedonic_model_price": 3.4895379681, "comparable_model_price": 2.8, "combined_zscore": 1.1164874612, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS982", "observed_price": 2.8, "hedonic_model_price": 1.4301473693, "comparable_model_price": 0.91, "combined_zscore": 1.2261322211, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS812", "observed_price": 5.096, "hedonic_model_price": 3.1798569611, "comparable_model_price": 1.26, "combined_zscore": 1.2366434667, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS68", "observed_price": 2.8, "hedonic_model_price": 1.3345572831, "comparable_model_price": 0.84, "combined_zscore": 1.3309012309, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS1764", "observed_price": 42.0, "hedonic_model_price": 2.1351531311, "comparable_model_price": 1.05, "combined_zscore": 4.6554460751, "classification": "strong potential overvaluation", "low_confidence": false}], "outliers": [{"project_id": "VCS1764", "observed_price": 42.0, "hedonic_model_price": 2.1351531311, "comparable_model_price": 1.05, "combined_zscore": 4.6554460751, "classification": "strong potential overvaluation", "low_confidence": false}], "charts": {"priceByRegistry": {"verra": [3.22, 0.7, 0.7, 0.91, 0.98, 0.7, 0.686, 2.8, 0.826, 0.14, 0.728, 0.7, 0.686, 0.98, 1.05, 1.82, 0.868, 1.008, 0.98, 2.8, 0.896, 0.686, 0.77, 0.798, 0.728, 42.0, 0.28, 0.84, 0.77, 0.84, 0.77, 5.6, 1.456, 5.096, 0.77, 0.84, 0.91, 0.7, 1.4, 1.232, 0.728, 1.4, 0.98, 2.8, 7.0, 1.26, 0.84, 1.4, 1.19, 0.406, 0.84]}, "actualVsPredicted": {"actual": [3.22, 0.7, 0.7, 0.91, 0.98, 0.7, 0.686, 2.8, 0.826, 0.14, 0.728, 0.7, 0.686, 0.98, 1.05, 1.82, 0.868, 1.008, 0.98, 2.8, 0.896, 0.686, 0.77, 0.798, 0.728, 42.0, 0.28, 0.84, 0.77, 0.84, 0.77, 5.6, 1.456, 5.096, 0.77, 0.84, 0.91, 0.7, 1.4, 1.232, 0.728, 1.4, 0.98, 2.8, 7.0, 1.26, 0.84, 1.4, 1.19, 0.406, 0.84], "predicted": [2.168, 0.681, 0.371, 1.005, 0.941, 0.664, 0.682, 1.335, 0.797, 0.399, 1.201, 0.374, 0.663, 0.582, 2.143, 3.326, 0.803, 0.993, 0.974, 1.43, 0.835, 0.747, 0.666, 1.189, 0.688, 2.135, 0.677, 0.837, 0.839, 0.837, 2.049, 3.321, 0.936, 3.18, 0.94, 1.41, 1.402, 0.938, 0.776, 2.057, 0.818, 1.171, 0.97, 3.512, 3.49, 2.08, 0.831, 3.31, 1.209, 1.104, 0.838], "projectIds": ["VCS1146", "VCS896", "VCS476", "VCS498", "VCS655", "VCS849", "VCS850", "VCS68", "VCS1174", "VCS191", "VCS2098", "VCS817", "VCS1356", "VCS2026", "VCS1883", "VCS1052", "VCS391", "VCS1190", "VCS1195", "VCS982", "VCS1758", "VCS766", "VCS10", "VCS1718", "VCS708", "VCS1764", "VCS836", "VCS917", "VCS1205", "VCS1100", "VCS426", "VCS1650", "VCS292", "VCS812", "VCS631", "VCS1580", "VCS1578", "VCS566", "VCS1140", "VCS786", "VCS986", "VCS1547", "VCS1525", "VCS981", "VCS674", "VCS929", "VCS1464", "VCS985", "VCS1258", "VCS784", "VCS1427"]}, "residuals": [0.3955, 0.0282, 0.6362, -0.0991, 0.0411, 0.0528, 0.0065, 0.741, 0.0357, -1.0465, -0.501, 0.6265, 0.034, 0.5211, -0.7133, -0.603, 0.0773, 0.0147, 0.0065, 0.6718, 0.0701, -0.0848, 0.1445, -0.3991, 0.0572, 2.9791, -0.8824, 0.003, -0.0856, 0.0037, -0.9787, 0.5225, 0.4422, 0.4716, -0.1998, -0.5181, -0.432, -0.2926, 0.5906, -0.5124, -0.1171, 0.1784, 0.0098, -0.2266, 0.6961, -0.5014, 0.011, -0.8606, -0.0162, -1.0003, 0.0021]}};
+
+function tagClass(classification) {
+  if (classification.includes('undervaluation')) return 'under';
+  if (classification.includes('overvaluation')) return 'over';
+  return 'fair';
+}
+
+document.getElementById('run-meta').textContent =
+  `${DATA.nTotal} credits scored · registries covered: ${DATA.registries.join(', ')} · run at ${DATA.runTimestamp}`;
+
+document.getElementById('stats-row').innerHTML = `
+  <div class="stat"><div class="n">${DATA.nTotal}</div><div class="label">credits priced &amp; scored</div></div>
+  <div class="stat under"><div class="n">${DATA.nUndervalued}</div><div class="label">potentially undervalued</div></div>
+  <div class="stat"><div class="n">${DATA.nFair}</div><div class="label">fair value range</div></div>
+  <div class="stat over"><div class="n">${DATA.nOvervalued}</div><div class="label">potentially overvalued</div></div>
+`;
+
+const rsq = DATA.diagnostics.r_squared;
+const condNum = DATA.diagnostics.condition_number;
+const multicollinear = DATA.diagnostics.multicollinearity_flag;
+document.getElementById('caution-text').textContent =
+  `This run has ${DATA.nTotal} priced credits. The hedonic model's R² is ${rsq.toFixed(2)}` +
+  (multicollinear
+    ? `, and the condition number (${condNum.toFixed(0)}) exceeds the conventional multicollinearity threshold of 30 — with a sample this size, treat individual model coefficients with real skepticism, not as settled findings.`
+    : `.`);
+
+const outliersContainer = document.getElementById('outliers-container');
+if (DATA.outliers.length === 0) {
+  outliersContainer.innerHTML = '<p style="color:var(--text-muted)">No credits currently exceed the ±2 z-score threshold.</p>';
+} else {
+  outliersContainer.innerHTML = DATA.outliers.map(o => `
+    <div class="outlier-card">
+      <div class="head">
+        <span class="pid">${o.project_id}</span>
+        <span class="cls ${tagClass(o.classification)}">${o.classification}</span>
+      </div>
+      <div class="detail">Observed $${o.observed_price.toFixed(2)} vs. hedonic model $${o.hedonic_model_price.toFixed(2)} and comparable model $${o.comparable_model_price.toFixed(2)} &middot; z = ${o.combined_zscore.toFixed(2)}</div>
+    </div>
+  `).join('');
+}
+
+const tbody = document.getElementById('ranked-tbody');
+tbody.innerHTML = DATA.rankedTable.map(r => `
+  <tr>
+    <td>${r.project_id}</td>
+    <td class="num">$${r.observed_price.toFixed(2)}</td>
+    <td class="num">$${r.hedonic_model_price.toFixed(2)}</td>
+    <td class="num">$${r.comparable_model_price.toFixed(2)}</td>
+    <td class="num">${r.combined_zscore.toFixed(2)}</td>
+    <td><span class="tag ${tagClass(r.classification)}">${r.classification}</span></td>
+  </tr>
+`).join('');
+
+Chart.defaults.color = '#9BA89E';
+Chart.defaults.font.family = "'IBM Plex Mono', monospace";
+Chart.defaults.borderColor = '#2E3F34';
+
+if (typeof Chart === 'undefined') {
+  // CDN blocked (corporate firewall, offline, etc.) — the table and stats above
+  // still work since they don't depend on Chart.js; just skip chart rendering
+  // and say so, rather than leaving three blank canvases with no explanation.
+  document.querySelectorAll('.chart-box').forEach(box => {
+    box.innerHTML = '<p style="color:var(--text-muted)">Chart could not load (Chart.js CDN unreachable). Table and figures above are unaffected.</p>';
+  });
+} else {
+
+const registryColors = ['#7FA88C', '#C97452', '#A89B7E', '#6B8FA3', '#B08FA8'];
+new Chart(document.getElementById('chart-registry'), {
+  type: 'bar',
+  data: {
+    labels: Object.keys(DATA.charts.priceByRegistry),
+    datasets: [{
+      label: 'Median price (USD)',
+      data: Object.values(DATA.charts.priceByRegistry).map(arr => {
+        const sorted = [...arr].sort((a,b) => a-b);
+        return sorted[Math.floor(sorted.length/2)] || 0;
+      }),
+      backgroundColor: registryColors,
+    }]
+  },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+
+new Chart(document.getElementById('chart-fit'), {
+  type: 'scatter',
+  data: {
+    datasets: [{
+      label: 'Credits',
+      data: DATA.charts.actualVsPredicted.actual.map((a, i) => ({ x: DATA.charts.actualVsPredicted.predicted[i], y: a })),
+      backgroundColor: '#7FA88C',
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { title: { display: true, text: 'Model-implied price (USD)' } },
+      y: { title: { display: true, text: 'Observed price (USD)' } },
+    }
+  }
+});
+
+new Chart(document.getElementById('chart-residuals'), {
+  type: 'bar',
+  data: (() => {
+    const vals = DATA.charts.residuals;
+    const bins = 15;
+    const min = Math.min(...vals), max = Math.max(...vals);
+    const width = (max - min) / bins || 1;
+    const counts = new Array(bins).fill(0);
+    vals.forEach(v => {
+      let idx = Math.floor((v - min) / width);
+      if (idx >= bins) idx = bins - 1;
+      if (idx < 0) idx = 0;
+      counts[idx]++;
+    });
+    const labels = counts.map((_, i) => (min + i * width).toFixed(2));
+    return { labels, datasets: [{ label: 'Residuals', data: counts, backgroundColor: '#A89B7E' }] };
+  })(),
+  options: { plugins: { legend: { display: false } } }
+});
+
+}
+</script>
+</body>
+</html>
