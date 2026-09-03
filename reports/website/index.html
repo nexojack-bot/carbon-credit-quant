@@ -33,37 +33,55 @@
     font-weight: 600;
     margin: 0 0 0.5em 0;
   }
-  .wrap { max-width: 980px; margin: 0 auto; padding: 48px 24px 96px; }
-  header { border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 40px; }
-  header h1 { font-size: 28px; letter-spacing: -0.01em; }
-  header p { color: var(--text-muted); margin: 4px 0 0; font-size: 13px; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 56px 24px 120px; }
+  header { border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 56px; }
+  header h1 { font-size: 30px; letter-spacing: -0.01em; }
+  header p { color: var(--text-muted); margin: 6px 0 0; font-size: 13px; }
 
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 40px; }
-  .stat { background: var(--surface); padding: 20px; }
-  .stat .n { font-size: 28px; font-weight: 600; }
-  .stat .label { color: var(--text-muted); font-size: 12px; margin-top: 4px; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 56px; }
+  .stat { background: var(--surface); padding: 24px 20px; }
+  .stat .n { font-size: 34px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .stat .label { color: var(--text-muted); font-size: 12px; margin-top: 6px; }
   .stat.under .n { color: var(--under); }
   .stat.over .n { color: var(--over); }
 
-  .caution { border: 1px solid var(--border); border-left: 3px solid var(--over); padding: 16px 20px; margin-bottom: 40px; background: var(--surface); }
-  .caution h3 { font-size: 14px; font-family: 'IBM Plex Mono', monospace; font-weight: 600; margin-bottom: 8px; }
+  .caution { border: 1px solid var(--border); border-left: 3px solid var(--over); padding: 18px 22px; margin-bottom: 56px; background: var(--surface); }
+  .caution h3 { font-size: 14px; font-family: 'IBM Plex Mono', monospace; font-weight: 600; margin-bottom: 10px; }
   .caution p { color: var(--text-muted); margin: 0 0 8px; font-size: 13px; }
   .caution p:last-child { margin-bottom: 0; }
 
-  section { margin-bottom: 48px; }
-  section > h2 { font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; }
+  section { margin-bottom: 64px; }
+  section > h2 { font-size: 20px; border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 24px; }
+  section > .section-note { color: var(--text-muted); font-size: 12px; margin: -16px 0 20px; }
 
-  .outlier-card { border: 1px solid var(--border); padding: 16px 20px; margin-bottom: 12px; }
-  .outlier-card .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .outlier-card { border: 1px solid var(--border); padding: 18px 22px; margin-bottom: 14px; }
+  .outlier-card .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
   .outlier-card .pid { font-weight: 600; font-size: 15px; }
   .outlier-card .cls { font-size: 12px; }
   .outlier-card .cls.over { color: var(--over); }
   .outlier-card .cls.under { color: var(--under); }
   .outlier-card .detail { color: var(--text-muted); font-size: 13px; }
 
+  .notable-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+  .notable-card { border: 1px solid var(--border); padding: 14px 16px; }
+  .notable-card .row1 { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .notable-card .pid { font-weight: 600; font-size: 14px; }
+  .notable-card .z { font-size: 13px; font-variant-numeric: tabular-nums; }
+  .notable-card .z.under { color: var(--under); }
+  .notable-card .z.over { color: var(--over); }
+  .notable-card .price-line { color: var(--text-muted); font-size: 12px; }
+
+  .table-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+  .table-controls input { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 8px 12px; flex: 1; }
+  .table-controls input:focus { outline: none; border-color: var(--under); }
+  .toggle-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 10px 16px; cursor: pointer; }
+  .toggle-btn:hover { border-color: var(--under); }
+
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { text-align: left; color: var(--text-muted); font-weight: 500; font-size: 11px; text-transform: none; padding: 8px 12px; border-bottom: 1px solid var(--border); }
-  td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  th { text-align: left; color: var(--text-muted); font-weight: 500; font-size: 11px; text-transform: none; padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }
+  th:hover { color: var(--text); }
+  th.num { text-align: right; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
   tr:hover td { background: var(--surface); }
   .num { text-align: right; font-variant-numeric: tabular-nums; }
   .tag { display: inline-block; padding: 2px 8px; border: 1px solid var(--border); font-size: 11px; }
@@ -71,16 +89,17 @@
   .tag.over { color: var(--over); border-color: var(--over); }
   .tag.fair { color: var(--fair); border-color: var(--fair); }
 
-  .chart-box { border: 1px solid var(--border); padding: 20px; margin-bottom: 20px; }
+  .chart-box { border: 1px solid var(--border); padding: 24px; margin-bottom: 20px; }
   .chart-box h3 { font-size: 14px; margin-bottom: 4px; }
-  .chart-box .note { color: var(--text-muted); font-size: 12px; margin-bottom: 16px; }
+  .chart-box .note { color: var(--text-muted); font-size: 12px; margin-bottom: 20px; }
   canvas { max-height: 320px; }
 
-  footer { border-top: 1px solid var(--border); padding-top: 20px; color: var(--text-muted); font-size: 12px; }
+  footer { border-top: 1px solid var(--border); padding-top: 24px; color: var(--text-muted); font-size: 12px; }
   footer a { color: var(--under); }
 
   @media (max-width: 640px) {
     .stats { grid-template-columns: repeat(2, 1fr); }
+    .notable-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -130,20 +149,32 @@
 </section>
 
 <section>
+  <h2>Most notable credits</h2>
+  <div class="section-note">The 8 largest deviations from fair value. Full table below.</div>
+  <div class="notable-grid" id="notable-grid"></div>
+</section>
+
+<section>
   <h2>Full ranked table</h2>
-  <table id="ranked-table">
-    <thead>
-      <tr>
-        <th>Project</th>
-        <th class="num">Observed</th>
-        <th class="num">Hedonic model</th>
-        <th class="num">Comparable model</th>
-        <th class="num">z-score</th>
-        <th>Classification</th>
-      </tr>
-    </thead>
-    <tbody id="ranked-tbody"></tbody>
-  </table>
+  <button class="toggle-btn" id="toggle-table">Show all <span id="toggle-count"></span> credits</button>
+  <div id="table-wrap" style="display:none; margin-top: 20px;">
+    <div class="table-controls">
+      <input type="text" id="table-search" placeholder="Search by project ID...">
+    </div>
+    <table id="ranked-table">
+      <thead>
+        <tr>
+          <th data-key="project_id">Project</th>
+          <th class="num" data-key="observed_price">Observed</th>
+          <th class="num" data-key="hedonic_model_price">Hedonic model</th>
+          <th class="num" data-key="comparable_model_price">Comparable model</th>
+          <th class="num" data-key="combined_zscore">z-score</th>
+          <th data-key="classification">Classification</th>
+        </tr>
+      </thead>
+      <tbody id="ranked-tbody"></tbody>
+    </table>
+  </div>
 </section>
 
 <footer>
@@ -153,7 +184,7 @@
 </div>
 
 <script>
-const DATA = {"runTimestamp": "2026-09-03T04:23:16.283280", "nTotal": 51, "nUndervalued": 6, "nOvervalued": 6, "nFair": 39, "registries": ["verra"], "diagnostics": {"r_squared": 0.4608, "adj_r_squared": 0.3425, "n_obs": 51, "condition_number": 465036.0987, "residual_mean": -0.0, "residual_std": 0.6283, "residual_skew": 1.933, "multicollinearity_flag": true}, "rankedTable": [{"project_id": "VCS191", "observed_price": 0.14, "hedonic_model_price": 0.3986696518, "comparable_model_price": 0.84, "combined_zscore": -1.9523900681, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS985", "observed_price": 1.4, "hedonic_model_price": 3.3103363467, "comparable_model_price": 5.096, "combined_zscore": -1.4940006276, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS784", "observed_price": 0.406, "hedonic_model_price": 1.1039796851, "comparable_model_price": 0.91, "combined_zscore": -1.3040002504, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS836", "observed_price": 0.28, "hedonic_model_price": 0.6766903919, "comparable_model_price": 0.7, "combined_zscore": -1.2780136349, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS1883", "observed_price": 1.05, "hedonic_model_price": 2.1427322362, "comparable_model_price": 2.8, "combined_zscore": -1.1835159121, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS426", "observed_price": 0.77, "hedonic_model_price": 2.0490539126, "comparable_model_price": 1.26, "combined_zscore": -1.0913960458, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS1052", "observed_price": 1.82, "hedonic_model_price": 3.3263508855, "comparable_model_price": 3.22, "combined_zscore": -0.8409236692, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS2098", "observed_price": 0.728, "hedonic_model_price": 1.2014659286, "comparable_model_price": 1.4, "combined_zscore": -0.8115177141, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1580", "observed_price": 0.84, "hedonic_model_price": 1.4102375704, "comparable_model_price": 1.4, "combined_zscore": -0.7362460949, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1718", "observed_price": 0.798, "hedonic_model_price": 1.1894205125, "comparable_model_price": 1.4, "combined_zscore": -0.6734149334, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1578", "observed_price": 0.91, "hedonic_model_price": 1.4016901325, "comparable_model_price": 1.4, "combined_zscore": -0.6179936682, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS981", "observed_price": 2.8, "hedonic_model_price": 3.5122863451, "comparable_model_price": 5.096, "combined_zscore": -0.5589836875, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS766", "observed_price": 0.686, "hedonic_model_price": 0.7467290985, "comparable_model_price": 1.4, "combined_zscore": -0.5172608859, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS566", "observed_price": 0.7, "hedonic_model_price": 0.9379107894, "comparable_model_price": 0.98, "combined_zscore": -0.448470519, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS786", "observed_price": 1.232, "hedonic_model_price": 2.056589511, "comparable_model_price": 1.26, "combined_zscore": -0.4283560888, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS929", "observed_price": 1.26, "hedonic_model_price": 2.0803955515, "comparable_model_price": 1.232, "combined_zscore": -0.3917123895, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS631", "observed_price": 0.77, "hedonic_model_price": 0.9402640243, "comparable_model_price": 0.98, "combined_zscore": -0.3154169627, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1356", "observed_price": 0.686, "hedonic_model_price": 0.6630825513, "comparable_model_price": 0.98, "combined_zscore": -0.2011652886, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS986", "observed_price": 0.728, "hedonic_model_price": 0.8184553091, "comparable_model_price": 0.84, "combined_zscore": -0.1887328795, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS850", "observed_price": 0.686, "hedonic_model_price": 0.6815448595, "comparable_model_price": 0.91, "combined_zscore": -0.176984563, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS498", "observed_price": 0.91, "hedonic_model_price": 1.0047605862, "comparable_model_price": 0.98, "combined_zscore": -0.1315066523, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1205", "observed_price": 0.77, "hedonic_model_price": 0.838847344, "comparable_model_price": 0.84, "combined_zscore": -0.1288415699, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS849", "observed_price": 0.7, "hedonic_model_price": 0.6640068369, "comparable_model_price": 0.77, "combined_zscore": -0.0238438339, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS896", "observed_price": 0.7, "hedonic_model_price": 0.6805607406, "comparable_model_price": 0.728, "combined_zscore": -0.0085974738, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1427", "observed_price": 0.84, "hedonic_model_price": 0.8382722613, "comparable_model_price": 0.84, "combined_zscore": -0.0050070368, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS917", "observed_price": 0.84, "hedonic_model_price": 0.8374953568, "comparable_model_price": 0.84, "combined_zscore": -0.0042691985, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1100", "observed_price": 0.84, "hedonic_model_price": 0.8369021585, "comparable_model_price": 0.84, "combined_zscore": -0.0037053678, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1195", "observed_price": 0.98, "hedonic_model_price": 0.9736192028, "comparable_model_price": 0.98, "combined_zscore": -0.0014473575, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1525", "observed_price": 0.98, "hedonic_model_price": 0.9704091351, "comparable_model_price": 0.98, "combined_zscore": 0.0011806059, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1464", "observed_price": 0.84, "hedonic_model_price": 0.83084576, "comparable_model_price": 0.84, "combined_zscore": 0.0020741722, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS708", "observed_price": 0.728, "hedonic_model_price": 0.6875206745, "comparable_model_price": 0.77, "combined_zscore": 0.0040373609, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1190", "observed_price": 1.008, "hedonic_model_price": 0.9932598936, "comparable_model_price": 0.98, "combined_zscore": 0.022575915, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS655", "observed_price": 0.98, "hedonic_model_price": 0.9405454976, "comparable_model_price": 0.98, "combined_zscore": 0.0260539981, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS391", "observed_price": 0.868, "hedonic_model_price": 0.8034560291, "comparable_model_price": 0.826, "combined_zscore": 0.0856500972, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1758", "observed_price": 0.896, "hedonic_model_price": 0.8353301999, "comparable_model_price": 0.84, "combined_zscore": 0.0892371043, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1174", "observed_price": 0.826, "hedonic_model_price": 0.7970512199, "comparable_model_price": 0.728, "combined_zscore": 0.1001942935, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1258", "observed_price": 1.19, "hedonic_model_price": 1.2094627673, "comparable_model_price": 0.98, "combined_zscore": 0.1010502034, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS10", "observed_price": 0.77, "hedonic_model_price": 0.66636989, "comparable_model_price": 0.7, "combined_zscore": 0.167581315, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1547", "observed_price": 1.4, "hedonic_model_price": 1.1712849136, "comparable_model_price": 0.91, "combined_zscore": 0.4028854885, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS817", "observed_price": 0.7, "hedonic_model_price": 0.3741057248, "comparable_model_price": 0.7, "combined_zscore": 0.49192605, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS476", "observed_price": 0.7, "hedonic_model_price": 0.3705083428, "comparable_model_price": 0.7, "combined_zscore": 0.4996149822, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS2026", "observed_price": 0.98, "hedonic_model_price": 0.5820038468, "comparable_model_price": 0.84, "combined_zscore": 0.5037557797, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS292", "observed_price": 1.456, "hedonic_model_price": 0.9356981393, "comparable_model_price": 0.77, "combined_zscore": 0.7409252747, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1140", "observed_price": 1.4, "hedonic_model_price": 0.7756140904, "comparable_model_price": 0.84, "combined_zscore": 0.7806160165, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1146", "observed_price": 3.22, "hedonic_model_price": 2.1681892845, "comparable_model_price": 1.4, "combined_zscore": 0.8254487127, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1650", "observed_price": 5.6, "hedonic_model_price": 3.3209881912, "comparable_model_price": 1.82, "combined_zscore": 1.107296549, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS674", "observed_price": 7.0, "hedonic_model_price": 3.4895379681, "comparable_model_price": 2.8, "combined_zscore": 1.1164874612, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS982", "observed_price": 2.8, "hedonic_model_price": 1.4301473693, "comparable_model_price": 0.91, "combined_zscore": 1.2261322211, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS812", "observed_price": 5.096, "hedonic_model_price": 3.1798569611, "comparable_model_price": 1.26, "combined_zscore": 1.2366434667, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS68", "observed_price": 2.8, "hedonic_model_price": 1.3345572831, "comparable_model_price": 0.84, "combined_zscore": 1.3309012309, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS1764", "observed_price": 42.0, "hedonic_model_price": 2.1351531311, "comparable_model_price": 1.05, "combined_zscore": 4.6554460751, "classification": "strong potential overvaluation", "low_confidence": false}], "outliers": [{"project_id": "VCS1764", "observed_price": 42.0, "hedonic_model_price": 2.1351531311, "comparable_model_price": 1.05, "combined_zscore": 4.6554460751, "classification": "strong potential overvaluation", "low_confidence": false}], "charts": {"priceByRegistry": {"verra": [3.22, 0.7, 0.7, 0.91, 0.98, 0.7, 0.686, 2.8, 0.826, 0.14, 0.728, 0.7, 0.686, 0.98, 1.05, 1.82, 0.868, 1.008, 0.98, 2.8, 0.896, 0.686, 0.77, 0.798, 0.728, 42.0, 0.28, 0.84, 0.77, 0.84, 0.77, 5.6, 1.456, 5.096, 0.77, 0.84, 0.91, 0.7, 1.4, 1.232, 0.728, 1.4, 0.98, 2.8, 7.0, 1.26, 0.84, 1.4, 1.19, 0.406, 0.84]}, "actualVsPredicted": {"actual": [3.22, 0.7, 0.7, 0.91, 0.98, 0.7, 0.686, 2.8, 0.826, 0.14, 0.728, 0.7, 0.686, 0.98, 1.05, 1.82, 0.868, 1.008, 0.98, 2.8, 0.896, 0.686, 0.77, 0.798, 0.728, 42.0, 0.28, 0.84, 0.77, 0.84, 0.77, 5.6, 1.456, 5.096, 0.77, 0.84, 0.91, 0.7, 1.4, 1.232, 0.728, 1.4, 0.98, 2.8, 7.0, 1.26, 0.84, 1.4, 1.19, 0.406, 0.84], "predicted": [2.168, 0.681, 0.371, 1.005, 0.941, 0.664, 0.682, 1.335, 0.797, 0.399, 1.201, 0.374, 0.663, 0.582, 2.143, 3.326, 0.803, 0.993, 0.974, 1.43, 0.835, 0.747, 0.666, 1.189, 0.688, 2.135, 0.677, 0.837, 0.839, 0.837, 2.049, 3.321, 0.936, 3.18, 0.94, 1.41, 1.402, 0.938, 0.776, 2.057, 0.818, 1.171, 0.97, 3.512, 3.49, 2.08, 0.831, 3.31, 1.209, 1.104, 0.838], "projectIds": ["VCS1146", "VCS896", "VCS476", "VCS498", "VCS655", "VCS849", "VCS850", "VCS68", "VCS1174", "VCS191", "VCS2098", "VCS817", "VCS1356", "VCS2026", "VCS1883", "VCS1052", "VCS391", "VCS1190", "VCS1195", "VCS982", "VCS1758", "VCS766", "VCS10", "VCS1718", "VCS708", "VCS1764", "VCS836", "VCS917", "VCS1205", "VCS1100", "VCS426", "VCS1650", "VCS292", "VCS812", "VCS631", "VCS1580", "VCS1578", "VCS566", "VCS1140", "VCS786", "VCS986", "VCS1547", "VCS1525", "VCS981", "VCS674", "VCS929", "VCS1464", "VCS985", "VCS1258", "VCS784", "VCS1427"]}, "residuals": [0.3955, 0.0282, 0.6362, -0.0991, 0.0411, 0.0528, 0.0065, 0.741, 0.0357, -1.0465, -0.501, 0.6265, 0.034, 0.5211, -0.7133, -0.603, 0.0773, 0.0147, 0.0065, 0.6718, 0.0701, -0.0848, 0.1445, -0.3991, 0.0572, 2.9791, -0.8824, 0.003, -0.0856, 0.0037, -0.9787, 0.5225, 0.4422, 0.4716, -0.1998, -0.5181, -0.432, -0.2926, 0.5906, -0.5124, -0.1171, 0.1784, 0.0098, -0.2266, 0.6961, -0.5014, 0.011, -0.8606, -0.0162, -1.0003, 0.0021]}};
+const DATA = {"runTimestamp": "2026-09-03T07:02:48.795816", "nTotal": 51, "nUndervalued": 6, "nOvervalued": 6, "nFair": 39, "registries": ["verra"], "diagnostics": {"r_squared": 0.4608, "adj_r_squared": 0.3425, "n_obs": 51, "condition_number": 465036.0987, "residual_mean": -0.0, "residual_std": 0.6283, "residual_skew": 1.933, "multicollinearity_flag": true}, "rankedTable": [{"project_id": "VCS191", "observed_price": 0.14, "hedonic_model_price": 0.3986696518, "comparable_model_price": 0.84, "combined_zscore": -1.9523900681, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS985", "observed_price": 1.4, "hedonic_model_price": 3.3103363467, "comparable_model_price": 5.096, "combined_zscore": -1.4940006276, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS784", "observed_price": 0.406, "hedonic_model_price": 1.1039796851, "comparable_model_price": 0.91, "combined_zscore": -1.3040002504, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS836", "observed_price": 0.28, "hedonic_model_price": 0.6766903919, "comparable_model_price": 0.7, "combined_zscore": -1.2780136349, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS1883", "observed_price": 1.05, "hedonic_model_price": 2.1427322362, "comparable_model_price": 2.8, "combined_zscore": -1.1835159121, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS426", "observed_price": 0.77, "hedonic_model_price": 2.0490539126, "comparable_model_price": 1.26, "combined_zscore": -1.0913960458, "classification": "moderate potential undervaluation", "low_confidence": false}, {"project_id": "VCS1052", "observed_price": 1.82, "hedonic_model_price": 3.3263508855, "comparable_model_price": 3.22, "combined_zscore": -0.8409236692, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS2098", "observed_price": 0.728, "hedonic_model_price": 1.2014659286, "comparable_model_price": 1.4, "combined_zscore": -0.8115177141, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1580", "observed_price": 0.84, "hedonic_model_price": 1.4102375704, "comparable_model_price": 1.4, "combined_zscore": -0.7362460949, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1718", "observed_price": 0.798, "hedonic_model_price": 1.1894205125, "comparable_model_price": 1.4, "combined_zscore": -0.6734149334, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1578", "observed_price": 0.91, "hedonic_model_price": 1.4016901325, "comparable_model_price": 1.4, "combined_zscore": -0.6179936682, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS981", "observed_price": 2.8, "hedonic_model_price": 3.5122863451, "comparable_model_price": 5.096, "combined_zscore": -0.5589836875, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS766", "observed_price": 0.686, "hedonic_model_price": 0.7467290985, "comparable_model_price": 1.4, "combined_zscore": -0.5172608859, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS566", "observed_price": 0.7, "hedonic_model_price": 0.9379107894, "comparable_model_price": 0.98, "combined_zscore": -0.448470519, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS786", "observed_price": 1.232, "hedonic_model_price": 2.056589511, "comparable_model_price": 1.26, "combined_zscore": -0.4283560888, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS929", "observed_price": 1.26, "hedonic_model_price": 2.0803955515, "comparable_model_price": 1.232, "combined_zscore": -0.3917123895, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS631", "observed_price": 0.77, "hedonic_model_price": 0.9402640243, "comparable_model_price": 0.98, "combined_zscore": -0.3154169627, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1356", "observed_price": 0.686, "hedonic_model_price": 0.6630825513, "comparable_model_price": 0.98, "combined_zscore": -0.2011652886, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS986", "observed_price": 0.728, "hedonic_model_price": 0.8184553091, "comparable_model_price": 0.84, "combined_zscore": -0.1887328795, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS850", "observed_price": 0.686, "hedonic_model_price": 0.6815448595, "comparable_model_price": 0.91, "combined_zscore": -0.176984563, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS498", "observed_price": 0.91, "hedonic_model_price": 1.0047605862, "comparable_model_price": 0.98, "combined_zscore": -0.1315066523, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1205", "observed_price": 0.77, "hedonic_model_price": 0.838847344, "comparable_model_price": 0.84, "combined_zscore": -0.1288415699, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS849", "observed_price": 0.7, "hedonic_model_price": 0.6640068369, "comparable_model_price": 0.77, "combined_zscore": -0.0238438339, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS896", "observed_price": 0.7, "hedonic_model_price": 0.6805607406, "comparable_model_price": 0.728, "combined_zscore": -0.0085974738, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1427", "observed_price": 0.84, "hedonic_model_price": 0.8382722613, "comparable_model_price": 0.84, "combined_zscore": -0.0050070368, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS917", "observed_price": 0.84, "hedonic_model_price": 0.8374953568, "comparable_model_price": 0.84, "combined_zscore": -0.0042691985, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1100", "observed_price": 0.84, "hedonic_model_price": 0.8369021585, "comparable_model_price": 0.84, "combined_zscore": -0.0037053678, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1195", "observed_price": 0.98, "hedonic_model_price": 0.9736192028, "comparable_model_price": 0.98, "combined_zscore": -0.0014473575, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1525", "observed_price": 0.98, "hedonic_model_price": 0.9704091351, "comparable_model_price": 0.98, "combined_zscore": 0.0011806059, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1464", "observed_price": 0.84, "hedonic_model_price": 0.83084576, "comparable_model_price": 0.84, "combined_zscore": 0.0020741722, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS708", "observed_price": 0.728, "hedonic_model_price": 0.6875206745, "comparable_model_price": 0.77, "combined_zscore": 0.0040373609, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1190", "observed_price": 1.008, "hedonic_model_price": 0.9932598936, "comparable_model_price": 0.98, "combined_zscore": 0.022575915, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS655", "observed_price": 0.98, "hedonic_model_price": 0.9405454976, "comparable_model_price": 0.98, "combined_zscore": 0.0260539981, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS391", "observed_price": 0.868, "hedonic_model_price": 0.8034560291, "comparable_model_price": 0.826, "combined_zscore": 0.0856500972, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1758", "observed_price": 0.896, "hedonic_model_price": 0.8353301999, "comparable_model_price": 0.84, "combined_zscore": 0.0892371043, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1174", "observed_price": 0.826, "hedonic_model_price": 0.7970512199, "comparable_model_price": 0.728, "combined_zscore": 0.1001942935, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1258", "observed_price": 1.19, "hedonic_model_price": 1.2094627673, "comparable_model_price": 0.98, "combined_zscore": 0.1010502034, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS10", "observed_price": 0.77, "hedonic_model_price": 0.66636989, "comparable_model_price": 0.7, "combined_zscore": 0.167581315, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1547", "observed_price": 1.4, "hedonic_model_price": 1.1712849136, "comparable_model_price": 0.91, "combined_zscore": 0.4028854885, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS817", "observed_price": 0.7, "hedonic_model_price": 0.3741057248, "comparable_model_price": 0.7, "combined_zscore": 0.49192605, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS476", "observed_price": 0.7, "hedonic_model_price": 0.3705083428, "comparable_model_price": 0.7, "combined_zscore": 0.4996149822, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS2026", "observed_price": 0.98, "hedonic_model_price": 0.5820038468, "comparable_model_price": 0.84, "combined_zscore": 0.5037557797, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS292", "observed_price": 1.456, "hedonic_model_price": 0.9356981393, "comparable_model_price": 0.77, "combined_zscore": 0.7409252747, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1140", "observed_price": 1.4, "hedonic_model_price": 0.7756140904, "comparable_model_price": 0.84, "combined_zscore": 0.7806160165, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1146", "observed_price": 3.22, "hedonic_model_price": 2.1681892845, "comparable_model_price": 1.4, "combined_zscore": 0.8254487127, "classification": "fair value range", "low_confidence": false}, {"project_id": "VCS1650", "observed_price": 5.6, "hedonic_model_price": 3.3209881912, "comparable_model_price": 1.82, "combined_zscore": 1.107296549, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS674", "observed_price": 7.0, "hedonic_model_price": 3.4895379681, "comparable_model_price": 2.8, "combined_zscore": 1.1164874612, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS982", "observed_price": 2.8, "hedonic_model_price": 1.4301473693, "comparable_model_price": 0.91, "combined_zscore": 1.2261322211, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS812", "observed_price": 5.096, "hedonic_model_price": 3.1798569611, "comparable_model_price": 1.26, "combined_zscore": 1.2366434667, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS68", "observed_price": 2.8, "hedonic_model_price": 1.3345572831, "comparable_model_price": 0.84, "combined_zscore": 1.3309012309, "classification": "moderate potential overvaluation", "low_confidence": false}, {"project_id": "VCS1764", "observed_price": 42.0, "hedonic_model_price": 2.1351531311, "comparable_model_price": 1.05, "combined_zscore": 4.6554460751, "classification": "strong potential overvaluation", "low_confidence": false}], "outliers": [{"project_id": "VCS1764", "observed_price": 42.0, "hedonic_model_price": 2.1351531311, "comparable_model_price": 1.05, "combined_zscore": 4.6554460751, "classification": "strong potential overvaluation", "low_confidence": false}], "charts": {"priceByRegistry": {"verra": [3.22, 0.7, 0.7, 0.91, 0.98, 0.7, 0.686, 2.8, 0.826, 0.14, 0.728, 0.7, 0.686, 0.98, 1.05, 1.82, 0.868, 1.008, 0.98, 2.8, 0.896, 0.686, 0.77, 0.798, 0.728, 42.0, 0.28, 0.84, 0.77, 0.84, 0.77, 5.6, 1.456, 5.096, 0.77, 0.84, 0.91, 0.7, 1.4, 1.232, 0.728, 1.4, 0.98, 2.8, 7.0, 1.26, 0.84, 1.4, 1.19, 0.406, 0.84]}, "actualVsPredicted": {"actual": [3.22, 0.7, 0.7, 0.91, 0.98, 0.7, 0.686, 2.8, 0.826, 0.14, 0.728, 0.7, 0.686, 0.98, 1.05, 1.82, 0.868, 1.008, 0.98, 2.8, 0.896, 0.686, 0.77, 0.798, 0.728, 42.0, 0.28, 0.84, 0.77, 0.84, 0.77, 5.6, 1.456, 5.096, 0.77, 0.84, 0.91, 0.7, 1.4, 1.232, 0.728, 1.4, 0.98, 2.8, 7.0, 1.26, 0.84, 1.4, 1.19, 0.406, 0.84], "predicted": [2.168, 0.681, 0.371, 1.005, 0.941, 0.664, 0.682, 1.335, 0.797, 0.399, 1.201, 0.374, 0.663, 0.582, 2.143, 3.326, 0.803, 0.993, 0.974, 1.43, 0.835, 0.747, 0.666, 1.189, 0.688, 2.135, 0.677, 0.837, 0.839, 0.837, 2.049, 3.321, 0.936, 3.18, 0.94, 1.41, 1.402, 0.938, 0.776, 2.057, 0.818, 1.171, 0.97, 3.512, 3.49, 2.08, 0.831, 3.31, 1.209, 1.104, 0.838], "projectIds": ["VCS1146", "VCS896", "VCS476", "VCS498", "VCS655", "VCS849", "VCS850", "VCS68", "VCS1174", "VCS191", "VCS2098", "VCS817", "VCS1356", "VCS2026", "VCS1883", "VCS1052", "VCS391", "VCS1190", "VCS1195", "VCS982", "VCS1758", "VCS766", "VCS10", "VCS1718", "VCS708", "VCS1764", "VCS836", "VCS917", "VCS1205", "VCS1100", "VCS426", "VCS1650", "VCS292", "VCS812", "VCS631", "VCS1580", "VCS1578", "VCS566", "VCS1140", "VCS786", "VCS986", "VCS1547", "VCS1525", "VCS981", "VCS674", "VCS929", "VCS1464", "VCS985", "VCS1258", "VCS784", "VCS1427"]}, "residuals": [0.3955, 0.0282, 0.6362, -0.0991, 0.0411, 0.0528, 0.0065, 0.741, 0.0357, -1.0465, -0.501, 0.6265, 0.034, 0.5211, -0.7133, -0.603, 0.0773, 0.0147, 0.0065, 0.6718, 0.0701, -0.0848, 0.1445, -0.3991, 0.0572, 2.9791, -0.8824, 0.003, -0.0856, 0.0037, -0.9787, 0.5225, 0.4422, 0.4716, -0.1998, -0.5181, -0.432, -0.2926, 0.5906, -0.5124, -0.1171, 0.1784, 0.0098, -0.2266, 0.6961, -0.5014, 0.011, -0.8606, -0.0162, -1.0003, 0.0021]}};
 
 function tagClass(classification) {
   if (classification.includes('undervaluation')) return 'under';
@@ -164,12 +195,31 @@ function tagClass(classification) {
 document.getElementById('run-meta').textContent =
   `${DATA.nTotal} credits scored · registries covered: ${DATA.registries.join(', ')} · run at ${DATA.runTimestamp}`;
 
+// One deliberate motion moment: the four hero stats count up on load,
+// rather than animating everything on the page. Respects reduced-motion.
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function countUp(el, target, duration = 700) {
+  if (prefersReducedMotion || target === 0) { el.textContent = target; return; }
+  const start = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target);
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
 document.getElementById('stats-row').innerHTML = `
-  <div class="stat"><div class="n">${DATA.nTotal}</div><div class="label">credits priced &amp; scored</div></div>
-  <div class="stat under"><div class="n">${DATA.nUndervalued}</div><div class="label">potentially undervalued</div></div>
-  <div class="stat"><div class="n">${DATA.nFair}</div><div class="label">fair value range</div></div>
-  <div class="stat over"><div class="n">${DATA.nOvervalued}</div><div class="label">potentially overvalued</div></div>
+  <div class="stat"><div class="n" id="stat-total">0</div><div class="label">credits priced &amp; scored</div></div>
+  <div class="stat under"><div class="n" id="stat-under">0</div><div class="label">potentially undervalued</div></div>
+  <div class="stat"><div class="n" id="stat-fair">0</div><div class="label">fair value range</div></div>
+  <div class="stat over"><div class="n" id="stat-over">0</div><div class="label">potentially overvalued</div></div>
 `;
+countUp(document.getElementById('stat-total'), DATA.nTotal);
+countUp(document.getElementById('stat-under'), DATA.nUndervalued);
+countUp(document.getElementById('stat-fair'), DATA.nFair);
+countUp(document.getElementById('stat-over'), DATA.nOvervalued);
 
 const rsq = DATA.diagnostics.r_squared;
 const condNum = DATA.diagnostics.condition_number;
@@ -195,17 +245,72 @@ if (DATA.outliers.length === 0) {
   `).join('');
 }
 
-const tbody = document.getElementById('ranked-tbody');
-tbody.innerHTML = DATA.rankedTable.map(r => `
-  <tr>
-    <td>${r.project_id}</td>
-    <td class="num">$${r.observed_price.toFixed(2)}</td>
-    <td class="num">$${r.hedonic_model_price.toFixed(2)}</td>
-    <td class="num">$${r.comparable_model_price.toFixed(2)}</td>
-    <td class="num">${r.combined_zscore.toFixed(2)}</td>
-    <td><span class="tag ${tagClass(r.classification)}">${r.classification}</span></td>
-  </tr>
+// Notable credits: the 8 largest deviations from fair value, shown as
+// compact cards — this is what most people actually want to scan first,
+// rather than parsing a 50-row table for the interesting rows themselves.
+const notable = [...DATA.rankedTable]
+  .sort((a, b) => Math.abs(b.combined_zscore) - Math.abs(a.combined_zscore))
+  .slice(0, 8);
+document.getElementById('notable-grid').innerHTML = notable.map(r => `
+  <div class="notable-card">
+    <div class="row1">
+      <span class="pid">${r.project_id}</span>
+      <span class="z ${tagClass(r.classification)}">${r.combined_zscore.toFixed(2)}</span>
+    </div>
+    <div class="price-line">$${r.observed_price.toFixed(2)} observed vs. $${r.hedonic_model_price.toFixed(2)} model</div>
+  </div>
 `).join('');
+
+// Full table: hidden by default, toggled open, searchable, sortable by
+// clicking a header. This is the progressive-disclosure fix for density —
+// the data is all still here, just not forced on screen at once.
+const toggleBtn = document.getElementById('toggle-table');
+const tableWrap = document.getElementById('table-wrap');
+document.getElementById('toggle-count').textContent = DATA.nTotal;
+let tableOpen = false;
+toggleBtn.addEventListener('click', () => {
+  tableOpen = !tableOpen;
+  tableWrap.style.display = tableOpen ? 'block' : 'none';
+  toggleBtn.textContent = tableOpen ? 'Hide table' : `Show all ${DATA.nTotal} credits`;
+});
+
+let currentSort = { key: 'combined_zscore', dir: 1 };
+let currentFilter = '';
+
+function renderTable() {
+  let rows = DATA.rankedTable.filter(r => r.project_id.toLowerCase().includes(currentFilter));
+  rows.sort((a, b) => {
+    const av = a[currentSort.key], bv = b[currentSort.key];
+    if (typeof av === 'string') return av.localeCompare(bv) * currentSort.dir;
+    return (av - bv) * currentSort.dir;
+  });
+  const tbody = document.getElementById('ranked-tbody');
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.project_id}</td>
+      <td class="num">$${r.observed_price.toFixed(2)}</td>
+      <td class="num">$${r.hedonic_model_price.toFixed(2)}</td>
+      <td class="num">$${r.comparable_model_price.toFixed(2)}</td>
+      <td class="num">${r.combined_zscore.toFixed(2)}</td>
+      <td><span class="tag ${tagClass(r.classification)}">${r.classification}</span></td>
+    </tr>
+  `).join('');
+}
+renderTable();
+
+document.getElementById('table-search').addEventListener('input', (e) => {
+  currentFilter = e.target.value.toLowerCase();
+  renderTable();
+});
+
+document.querySelectorAll('#ranked-table th[data-key]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    currentSort.dir = (currentSort.key === key) ? -currentSort.dir : 1;
+    currentSort.key = key;
+    renderTable();
+  });
+});
 
 Chart.defaults.color = '#9BA89E';
 Chart.defaults.font.family = "'IBM Plex Mono', monospace";
