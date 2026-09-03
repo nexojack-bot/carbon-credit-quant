@@ -1,0 +1,44 @@
+name: Refresh Carbonmark prices and relative-value scores
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"  # every Monday at 06:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install jupyter nbconvert ipykernel
+      - name: Run notebook 02 (pull live Carbonmark prices)
+        env:
+          CARBONMARK_API_KEY: ${{ secrets.CARBONMARK_API_KEY }}
+        run: |
+          if [ -z "$CARBONMARK_API_KEY" ]; then
+            echo "::error::CARBONMARK_API_KEY secret is not set."
+            exit 1
+          fi
+          jupyter nbconvert --to notebook --execute --inplace notebooks/02_carbonmark_prices.ipynb
+      - name: Run notebook 03 (clean, model, score, rebuild website)
+        run: |
+          jupyter nbconvert --to notebook --execute --inplace notebooks/03_pricing_model.ipynb
+      - name: Commit refreshed data and website
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/interim/carbonmark_prices_latest.csv data/interim/carbonmark_prices_*.csv data/processed/relative_value_scores_latest.csv reports/website/index.html
+          git diff --staged --quiet || git commit -m "Automated: refresh Carbonmark prices and relative-value scores"
+          git push
