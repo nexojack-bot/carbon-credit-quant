@@ -195,6 +195,21 @@ def build_dashboard_html(
   footer {{ border-top: 1px solid var(--border); padding-top: 24px; color: var(--text-muted); font-size: 12px; }}
   footer a {{ color: var(--under); }}
 
+  .ticker-strip {{ overflow: hidden; white-space: nowrap; background: var(--surface); border-bottom: 1px solid var(--border); padding: 11px 0; }}
+  .ticker-label {{ display: inline-block; color: var(--text-muted); font-size: 11px; letter-spacing: 0.04em; padding: 0 20px 0 24px; border-right: 1px solid var(--border); vertical-align: middle; }}
+  .ticker-viewport {{ display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: middle; width: calc(100% - 130px); }}
+  .ticker-track {{ display: inline-flex; gap: 36px; animation: ticker-scroll 55s linear infinite; will-change: transform; }}
+  .ticker-item {{ font-size: 13px; white-space: nowrap; }}
+  .ticker-item .pid {{ font-weight: 600; color: var(--text); }}
+  .ticker-item .price {{ margin-left: 8px; }}
+  .ticker-item .price.under {{ color: var(--under); }}
+  .ticker-item .price.over {{ color: var(--over); }}
+  .ticker-item .price.fair {{ color: var(--fair); }}
+  @keyframes ticker-scroll {{ from {{ transform: translateX(0); }} to {{ transform: translateX(-50%); }} }}
+  @media (prefers-reduced-motion: reduce) {{
+    .ticker-track {{ animation: none; }}
+    .ticker-viewport {{ overflow-x: auto; }}
+  }}
   @media (max-width: 640px) {{
     .stats {{ grid-template-columns: repeat(2, 1fr); }}
     .notable-grid {{ grid-template-columns: 1fr; }}
@@ -202,6 +217,10 @@ def build_dashboard_html(
 </style>
 </head>
 <body>
+<div class="ticker-strip">
+  <span class="ticker-label">Price ticker</span>
+  <span class="ticker-viewport"><span class="ticker-track" id="ticker-track"></span></span>
+</div>
 <div class="wrap">
 
 <header>
@@ -292,6 +311,15 @@ function tagClass(classification) {{
 
 document.getElementById('run-meta').textContent =
   `${{DATA.nTotal}} credits scored · registries covered: ${{DATA.registries.join(', ')}} · run at ${{DATA.runTimestamp}}`;
+
+// Ticker strip: real prices from this run, not decorative placeholder text.
+// Duplicated once so the CSS animation (translateX -50%) loops seamlessly —
+// standard marquee technique, avoids a visible jump-cut at the loop point.
+function tickerItemHtml(r) {{
+  return `<span class="ticker-item"><span class="pid">${{r.project_id}}</span><span class="price ${{tagClass(r.classification)}}">$${{r.observed_price.toFixed(2)}}</span></span>`;
+}}
+const tickerHtml = DATA.rankedTable.map(tickerItemHtml).join('');
+document.getElementById('ticker-track').innerHTML = tickerHtml + tickerHtml;
 
 // One deliberate motion moment: the four hero stats count up on load,
 // rather than animating everything on the page. Respects reduced-motion.
