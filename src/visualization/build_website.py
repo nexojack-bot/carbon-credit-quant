@@ -1,11 +1,20 @@
 """
 Generates a static HTML dashboard from the pipeline's real output.
 
-Design approach: a research "field ledger" aesthetic — deep forest-ink
-background, parchment text, monospace throughout for genuine tabular
-alignment (this is a data-dense financial page, not a marketing site, so
-monospace is functional here, not decorative). Serif for headlines only,
-to read like a research bulletin rather than a SaaS dashboard.
+Design direction: a carbon credit register — a registry-issued credit is a
+serialized, verified certificate, so the page borrows from that world
+rather than from generic SaaS analytics: light archival paper (not the
+common warm-cream/terracotta default, a cooler sage tone instead), a
+bordered masthead with corner registration marks, an asymmetric hero frame
+around one thesis number instead of four equal stat boxes, and a rotated
+circular verification stamp — the page's one signature element — marking
+every flagged or notable credit, echoing an actual registry stamp.
+
+Type carries three distinct jobs rather than one font doing everything:
+Bricolage Grotesque for identity (masthead + hero number only), Spectral
+serif for reading (captions, notes, section framing), and Martian Mono
+for every real data value (prices, IDs, the ticker, the table) — so data
+reads like a serial number, not decoration.
 
 Data is embedded directly as a JSON blob in a <script> tag rather than
 fetched from a separate file — this means the page works when opened
@@ -94,151 +103,190 @@ def build_dashboard_html(
     }
     payload_json = json.dumps(payload)
 
-    any_significant = False  # set from diagnostics context in the narrative below; real check done in JS
-
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Carbon credit relative-value ledger</title>
+<title>Carbon credit register</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Spectral:ital,wght@0,400;0,500;1,400&family=Martian+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
 <style>
   :root {{
-    --bg: #14201A;
-    --surface: #1C2B22;
-    --border: #2E3F34;
-    --text: #E8E4D6;
-    --text-muted: #9BA89E;
-    --under: #7FA88C;
-    --over: #C97452;
-    --fair: #A89B7E;
+    --paper: #EDEFE3;
+    --paper-raised: #F6F7EF;
+    --ink: #1B211D;
+    --ink-muted: #5B6259;
+    --rule: #C7CDBE;
+    --rule-strong: #9BA495;
+    --stamp-red: #B23A2A;
+    --stamp-green: #2F6B4F;
+    --stamp-tan: #8A7440;
   }}
   * {{ box-sizing: border-box; }}
   body {{
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 14px;
-    line-height: 1.6;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Spectral', serif;
+    font-size: 15px;
+    line-height: 1.7;
     margin: 0;
     padding: 0;
   }}
-  h1, h2, h3 {{
-    font-family: 'Source Serif 4', serif;
-    font-weight: 600;
-    margin: 0 0 0.5em 0;
+  .data, table, .ticker-item, .stamp, .hero-n, .table-controls input, .toggle-btn, .pid, .num, code {{
+    font-family: 'Martian Mono', monospace;
   }}
-  .wrap {{ max-width: 980px; margin: 0 auto; padding: 56px 24px 120px; }}
-  header {{ border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 56px; }}
-  header h1 {{ font-size: 30px; letter-spacing: -0.01em; }}
-  header p {{ color: var(--text-muted); margin: 6px 0 0; font-size: 13px; }}
+  h1, h2 {{ font-family: 'Bricolage Grotesque', sans-serif; margin: 0; }}
+  .wrap {{ max-width: 960px; margin: 0 auto; padding: 48px 24px 120px; }}
 
-  .stats {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 56px; }}
-  .stat {{ background: var(--surface); padding: 24px 20px; }}
-  .stat .n {{ font-size: 34px; font-weight: 600; font-variant-numeric: tabular-nums; }}
-  .stat .label {{ color: var(--text-muted); font-size: 12px; margin-top: 6px; }}
-  .stat.under .n {{ color: var(--under); }}
-  .stat.over .n {{ color: var(--over); }}
+  .masthead {{ position: relative; border: 1.5px solid var(--rule-strong); padding: 28px 32px; margin-bottom: 48px; }}
+  .reg-mark {{ position: absolute; font-family: 'Martian Mono', monospace; font-size: 13px; color: var(--rule-strong); line-height: 1; }}
+  .reg-mark.tl {{ top: 8px; left: 8px; }}
+  .reg-mark.tr {{ top: 8px; right: 8px; }}
+  .reg-mark.bl {{ bottom: 8px; left: 8px; }}
+  .reg-mark.br {{ bottom: 8px; right: 8px; }}
+  .eyebrow {{ font-family: 'Martian Mono', monospace; font-size: 11px; color: var(--ink-muted); letter-spacing: 0.08em; margin-bottom: 10px; }}
+  .masthead h1 {{ font-size: 34px; font-weight: 800; letter-spacing: -0.01em; }}
+  .masthead .meta {{ font-style: italic; color: var(--ink-muted); font-size: 13px; margin-top: 10px; }}
 
-  .caution {{ border: 1px solid var(--border); border-left: 3px solid var(--over); padding: 18px 22px; margin-bottom: 56px; background: var(--surface); }}
-  .caution h3 {{ font-size: 14px; font-family: 'IBM Plex Mono', monospace; font-weight: 600; margin-bottom: 10px; }}
-  .caution p {{ color: var(--text-muted); margin: 0 0 8px; font-size: 13px; }}
+  .hero {{ border: 1px solid var(--rule-strong); box-shadow: 0 0 0 4px var(--paper), 0 0 0 5px var(--rule); margin: 0 0 48px; padding: 32px; text-align: center; }}
+  .hero-n {{ font-family: 'Bricolage Grotesque', sans-serif; font-size: 84px; font-weight: 800; line-height: 1; }}
+  .hero-label {{ font-style: italic; color: var(--ink-muted); font-size: 14px; margin-top: 8px; }}
+  .hero-totals {{ margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; }}
+  .hero-totals span {{ margin: 0 10px; }}
+  .hero-totals .under {{ color: var(--stamp-green); }}
+  .hero-totals .over {{ color: var(--stamp-red); }}
+  .hero-totals .fair {{ color: var(--stamp-tan); }}
+
+  .caution {{ border-left: 3px solid var(--stamp-red); padding: 16px 22px; margin-bottom: 48px; background: var(--paper-raised); }}
+  .caution h3 {{ font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 8px; }}
+  .caution p {{ color: var(--ink-muted); margin: 0 0 8px; font-size: 14px; font-style: italic; }}
   .caution p:last-child {{ margin-bottom: 0; }}
 
-  section {{ margin-bottom: 64px; }}
-  section > h2 {{ font-size: 20px; border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 24px; }}
-  section > .section-note {{ color: var(--text-muted); font-size: 12px; margin: -16px 0 20px; }}
+  section {{ margin-bottom: 60px; }}
+  section > h2 {{ font-size: 20px; font-weight: 700; border-bottom: 1px solid var(--rule-strong); padding-bottom: 12px; margin-bottom: 22px; }}
+  section > .section-note {{ color: var(--ink-muted); font-size: 13px; font-style: italic; margin: -12px 0 20px; }}
 
-  .outlier-card {{ border: 1px solid var(--border); padding: 18px 22px; margin-bottom: 14px; }}
-  .outlier-card .head {{ display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }}
-  .outlier-card .pid {{ font-weight: 600; font-size: 15px; }}
-  .outlier-card .cls {{ font-size: 12px; }}
-  .outlier-card .cls.over {{ color: var(--over); }}
-  .outlier-card .cls.under {{ color: var(--under); }}
-  .outlier-card .detail {{ color: var(--text-muted); font-size: 13px; }}
+  .stamp {{
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 52px; height: 52px; border-radius: 50%; border: 2px solid currentColor;
+    transform: rotate(-8deg); font-size: 10px; letter-spacing: 0.02em; text-align: center;
+    flex-shrink: 0;
+  }}
+  .stamp.under {{ color: var(--stamp-green); }}
+  .stamp.over {{ color: var(--stamp-red); }}
 
-  .notable-grid {{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }}
-  .notable-card {{ border: 1px solid var(--border); padding: 14px 16px; }}
+  .outlier-card {{ border: 1px solid var(--rule-strong); padding: 18px 22px; margin-bottom: 14px; display: flex; align-items: center; gap: 18px; }}
+  .outlier-card .body {{ flex: 1; }}
+  .outlier-card .head {{ display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }}
+  .outlier-card .pid {{ font-weight: 700; font-size: 15px; }}
+  .outlier-card .cls {{ font-family: 'Spectral', serif; font-style: italic; font-size: 13px; }}
+  .outlier-card .cls.over {{ color: var(--stamp-red); }}
+  .outlier-card .cls.under {{ color: var(--stamp-green); }}
+  .outlier-card .detail {{ color: var(--ink-muted); font-size: 13px; }}
+
+  .notable-grid {{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }}
+  .notable-card {{ position: relative; border: 1px solid var(--rule-strong); border-left: 2px dashed var(--rule-strong); padding: 14px 16px 14px 22px; }}
+  .notable-card::before {{
+    content: ""; position: absolute; left: -6px; top: 50%; transform: translateY(-50%);
+    width: 11px; height: 11px; border-radius: 50%; background: var(--paper); border: 1px solid var(--rule-strong);
+  }}
   .notable-card .row1 {{ display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }}
-  .notable-card .pid {{ font-weight: 600; font-size: 14px; }}
-  .notable-card .z {{ font-size: 13px; font-variant-numeric: tabular-nums; }}
-  .notable-card .z.under {{ color: var(--under); }}
-  .notable-card .z.over {{ color: var(--over); }}
-  .notable-card .price-line {{ color: var(--text-muted); font-size: 12px; }}
+  .notable-card .pid {{ font-weight: 700; font-size: 14px; }}
+  .notable-card .z {{ font-size: 13px; }}
+  .notable-card .z.under {{ color: var(--stamp-green); }}
+  .notable-card .z.over {{ color: var(--stamp-red); }}
+  .notable-card .price-line {{ color: var(--ink-muted); font-size: 12px; font-family: 'Spectral', serif; font-style: italic; }}
 
   .table-controls {{ display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }}
-  .table-controls input {{ background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 8px 12px; flex: 1; }}
-  .table-controls input:focus {{ outline: none; border-color: var(--under); }}
-  .toggle-btn {{ background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 10px 16px; cursor: pointer; }}
-  .toggle-btn:hover {{ border-color: var(--under); }}
+  .table-controls input {{ background: var(--paper-raised); border: 1px solid var(--rule-strong); color: var(--ink); font-size: 13px; padding: 9px 12px; flex: 1; }}
+  .table-controls input:focus {{ outline: none; border-color: var(--stamp-green); }}
+  .toggle-btn {{ background: var(--paper-raised); border: 1px solid var(--rule-strong); color: var(--ink); font-size: 13px; padding: 11px 18px; cursor: pointer; }}
+  .toggle-btn:hover {{ border-color: var(--stamp-green); color: var(--stamp-green); }}
 
   table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
-  th {{ text-align: left; color: var(--text-muted); font-weight: 500; font-size: 11px; text-transform: none; padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }}
-  th:hover {{ color: var(--text); }}
+  thead tr {{ border-top: 3px double var(--ink); border-bottom: 1px solid var(--rule-strong); }}
+  th {{ text-align: left; color: var(--ink-muted); font-weight: 500; font-size: 11px; padding: 10px 12px; cursor: pointer; user-select: none; font-family: 'Martian Mono', monospace; }}
+  th:hover {{ color: var(--ink); }}
   th.num {{ text-align: right; }}
-  td {{ padding: 10px 12px; border-bottom: 1px solid var(--border); }}
-  tr:hover td {{ background: var(--surface); }}
-  .num {{ text-align: right; font-variant-numeric: tabular-nums; }}
-  .tag {{ display: inline-block; padding: 2px 8px; border: 1px solid var(--border); font-size: 11px; }}
-  .tag.under {{ color: var(--under); border-color: var(--under); }}
-  .tag.over {{ color: var(--over); border-color: var(--over); }}
-  .tag.fair {{ color: var(--fair); border-color: var(--fair); }}
+  td {{ padding: 10px 12px; border-bottom: 1px solid var(--rule); }}
+  tbody tr:last-child {{ border-bottom: 3px double var(--ink); }}
+  tbody tr:nth-child(even) {{ background: var(--paper-raised); }}
+  .num {{ text-align: right; }}
+  .tag {{ display: inline-block; padding: 2px 8px; border: 1px solid currentColor; font-size: 11px; }}
+  .tag.under {{ color: var(--stamp-green); }}
+  .tag.over {{ color: var(--stamp-red); }}
+  .tag.fair {{ color: var(--stamp-tan); }}
 
-  .chart-box {{ border: 1px solid var(--border); padding: 24px; margin-bottom: 20px; }}
-  .chart-box h3 {{ font-size: 14px; margin-bottom: 4px; }}
-  .chart-box .note {{ color: var(--text-muted); font-size: 12px; margin-bottom: 20px; }}
+  .chart-box {{ border: 1px solid var(--rule-strong); padding: 24px; margin-bottom: 20px; background: var(--paper-raised); }}
+  .chart-box h3 {{ font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 4px; }}
+  .chart-box .note {{ color: var(--ink-muted); font-size: 12px; font-style: italic; margin-bottom: 20px; }}
   canvas {{ max-height: 320px; }}
 
-  footer {{ border-top: 1px solid var(--border); padding-top: 24px; color: var(--text-muted); font-size: 12px; }}
-  footer a {{ color: var(--under); }}
+  footer {{ border-top: 1px solid var(--rule-strong); padding-top: 22px; color: var(--ink-muted); font-size: 12px; font-style: italic; }}
+  footer a {{ color: var(--stamp-green); }}
 
-  .ticker-strip {{ overflow: hidden; white-space: nowrap; background: var(--surface); border-bottom: 1px solid var(--border); padding: 11px 0; }}
-  .ticker-label {{ display: inline-block; color: var(--text-muted); font-size: 11px; letter-spacing: 0.04em; padding: 0 20px 0 24px; border-right: 1px solid var(--border); vertical-align: middle; }}
-  .ticker-viewport {{ display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: middle; width: calc(100% - 130px); }}
-  .ticker-track {{ display: inline-flex; gap: 36px; animation: ticker-scroll 55s linear infinite; will-change: transform; }}
-  .ticker-item {{ font-size: 13px; white-space: nowrap; }}
-  .ticker-item .pid {{ font-weight: 600; color: var(--text); }}
+  .ticker-strip {{ overflow: hidden; white-space: nowrap; background: var(--paper-raised); border-bottom: 1.5px solid var(--rule-strong); padding: 11px 0; }}
+  .ticker-label {{ display: inline-block; font-family: 'Martian Mono', monospace; color: var(--ink-muted); font-size: 11px; letter-spacing: 0.05em; padding: 0 20px 0 24px; border-right: 1px dashed var(--rule-strong); vertical-align: middle; }}
+  .ticker-viewport {{ display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: middle; width: calc(100% - 150px); }}
+  .ticker-track {{ display: inline-flex; animation: ticker-scroll 55s linear infinite; will-change: transform; }}
+  .ticker-item {{ font-size: 13px; white-space: nowrap; padding: 0 18px; border-right: 1px dashed var(--rule-strong); }}
+  .ticker-item .pid {{ font-weight: 700; color: var(--ink); }}
   .ticker-item .price {{ margin-left: 8px; }}
-  .ticker-item .price.under {{ color: var(--under); }}
-  .ticker-item .price.over {{ color: var(--over); }}
-  .ticker-item .price.fair {{ color: var(--fair); }}
+  .ticker-item .price.under {{ color: var(--stamp-green); }}
+  .ticker-item .price.over {{ color: var(--stamp-red); }}
+  .ticker-item .price.fair {{ color: var(--stamp-tan); }}
   @keyframes ticker-scroll {{ from {{ transform: translateX(0); }} to {{ transform: translateX(-50%); }} }}
   @media (prefers-reduced-motion: reduce) {{
     .ticker-track {{ animation: none; }}
     .ticker-viewport {{ overflow-x: auto; }}
   }}
+
   @media (max-width: 640px) {{
-    .stats {{ grid-template-columns: repeat(2, 1fr); }}
     .notable-grid {{ grid-template-columns: 1fr; }}
+    .hero-n {{ font-size: 56px; }}
   }}
 </style>
 </head>
 <body>
 <div class="ticker-strip">
-  <span class="ticker-label">Price ticker</span>
+  <span class="ticker-label">Price register</span>
   <span class="ticker-viewport"><span class="ticker-track" id="ticker-track"></span></span>
 </div>
 <div class="wrap">
 
-<header>
-  <h1>Carbon credit relative-value ledger</h1>
-  <p id="run-meta"></p>
-</header>
+<div class="masthead">
+  <span class="reg-mark tl">+</span>
+  <span class="reg-mark tr">+</span>
+  <span class="reg-mark bl">+</span>
+  <span class="reg-mark br">+</span>
+  <div class="eyebrow">Relative-value review</div>
+  <h1>Carbon credit register</h1>
+  <p class="meta" id="run-meta"></p>
+</div>
 
-<div class="stats" id="stats-row"></div>
+<div class="hero">
+  <div class="hero-n" id="hero-total">0</div>
+  <div class="hero-label">credits reviewed against comparable credits this run</div>
+  <div class="hero-totals" id="hero-totals"></div>
+</div>
 
 <div class="caution">
-  <h3>Read this before the table below</h3>
+  <h3>Read this before the register below</h3>
   <p id="caution-text"></p>
   <p>Every classification here means "potentially" mispriced relative to a small comparable set — not a confirmed arbitrage opportunity. See the full research log in the repository for how each model and threshold was chosen.</p>
 </div>
 
 <section id="outliers-section">
-  <h2>Flagged discrepancies</h2>
+  <h2>Flagged on review</h2>
   <div id="outliers-container"></div>
+</section>
+
+<section>
+  <h2>Most notable credits</h2>
+  <div class="section-note">The 8 largest deviations from fair value. Full register below.</div>
+  <div class="notable-grid" id="notable-grid"></div>
 </section>
 
 <section>
@@ -266,13 +314,7 @@ def build_dashboard_html(
 </section>
 
 <section>
-  <h2>Most notable credits</h2>
-  <div class="section-note">The 8 largest deviations from fair value. Full table below.</div>
-  <div class="notable-grid" id="notable-grid"></div>
-</section>
-
-<section>
-  <h2>Full ranked table</h2>
+  <h2>The register</h2>
   <button class="toggle-btn" id="toggle-table">Show all <span id="toggle-count"></span> credits</button>
   <div id="table-wrap" style="display:none; margin-top: 20px;">
     <div class="table-controls">
@@ -310,19 +352,14 @@ function tagClass(classification) {{
 }}
 
 document.getElementById('run-meta').textContent =
-  `${{DATA.nTotal}} credits scored · registries covered: ${{DATA.registries.join(', ')}} · run at ${{DATA.runTimestamp}}`;
+  `${{DATA.nTotal}} credits scored \u00b7 registries covered: ${{DATA.registries.join(', ')}} \u00b7 run at ${{DATA.runTimestamp}}`;
 
-// Ticker strip: real prices from this run, not decorative placeholder text.
-// Duplicated once so the CSS animation (translateX -50%) loops seamlessly —
-// standard marquee technique, avoids a visible jump-cut at the loop point.
 function tickerItemHtml(r) {{
   return `<span class="ticker-item"><span class="pid">${{r.project_id}}</span><span class="price ${{tagClass(r.classification)}}">$${{r.observed_price.toFixed(2)}}</span></span>`;
 }}
 const tickerHtml = DATA.rankedTable.map(tickerItemHtml).join('');
 document.getElementById('ticker-track').innerHTML = tickerHtml + tickerHtml;
 
-// One deliberate motion moment: the four hero stats count up on load,
-// rather than animating everything on the page. Respects reduced-motion.
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function countUp(el, target, duration = 700) {{
   if (prefersReducedMotion || target === 0) {{ el.textContent = target; return; }}
@@ -335,17 +372,9 @@ function countUp(el, target, duration = 700) {{
   }}
   requestAnimationFrame(tick);
 }}
-
-document.getElementById('stats-row').innerHTML = `
-  <div class="stat"><div class="n" id="stat-total">0</div><div class="label">credits priced &amp; scored</div></div>
-  <div class="stat under"><div class="n" id="stat-under">0</div><div class="label">potentially undervalued</div></div>
-  <div class="stat"><div class="n" id="stat-fair">0</div><div class="label">fair value range</div></div>
-  <div class="stat over"><div class="n" id="stat-over">0</div><div class="label">potentially overvalued</div></div>
-`;
-countUp(document.getElementById('stat-total'), DATA.nTotal);
-countUp(document.getElementById('stat-under'), DATA.nUndervalued);
-countUp(document.getElementById('stat-fair'), DATA.nFair);
-countUp(document.getElementById('stat-over'), DATA.nOvervalued);
+countUp(document.getElementById('hero-total'), DATA.nTotal);
+document.getElementById('hero-totals').innerHTML =
+  `<span class="under">${{DATA.nUndervalued}} undervalued</span>\u00b7<span class="fair">${{DATA.nFair}} fair</span>\u00b7<span class="over">${{DATA.nOvervalued}} overvalued</span>`;
 
 const rsq = DATA.diagnostics.r_squared;
 const condNum = DATA.diagnostics.condition_number;
@@ -358,22 +387,22 @@ document.getElementById('caution-text').textContent =
 
 const outliersContainer = document.getElementById('outliers-container');
 if (DATA.outliers.length === 0) {{
-  outliersContainer.innerHTML = '<p style="color:var(--text-muted)">No credits currently exceed the \u00b12 z-score threshold.</p>';
+  outliersContainer.innerHTML = '<p style="color:var(--ink-muted); font-style:italic;">No credits currently exceed the \u00b12 z-score threshold.</p>';
 }} else {{
   outliersContainer.innerHTML = DATA.outliers.map(o => `
     <div class="outlier-card">
-      <div class="head">
-        <span class="pid">${{o.project_id}}</span>
-        <span class="cls ${{tagClass(o.classification)}}">${{o.classification}}</span>
+      <div class="stamp ${{tagClass(o.classification)}}">${{o.combined_zscore > 0 ? '+' : ''}}${{o.combined_zscore.toFixed(1)}}</div>
+      <div class="body">
+        <div class="head">
+          <span class="pid">${{o.project_id}}</span>
+          <span class="cls ${{tagClass(o.classification)}}">${{o.classification}}</span>
+        </div>
+        <div class="detail">Observed $${{o.observed_price.toFixed(2)}} vs. hedonic model $${{o.hedonic_model_price.toFixed(2)}} and comparable model $${{o.comparable_model_price.toFixed(2)}}</div>
       </div>
-      <div class="detail">Observed $${{o.observed_price.toFixed(2)}} vs. hedonic model $${{o.hedonic_model_price.toFixed(2)}} and comparable model $${{o.comparable_model_price.toFixed(2)}} &middot; z = ${{o.combined_zscore.toFixed(2)}}</div>
     </div>
   `).join('');
 }}
 
-// Notable credits: the 8 largest deviations from fair value, shown as
-// compact cards — this is what most people actually want to scan first,
-// rather than parsing a 50-row table for the interesting rows themselves.
 const notable = [...DATA.rankedTable]
   .sort((a, b) => Math.abs(b.combined_zscore) - Math.abs(a.combined_zscore))
   .slice(0, 8);
@@ -387,9 +416,6 @@ document.getElementById('notable-grid').innerHTML = notable.map(r => `
   </div>
 `).join('');
 
-// Full table: hidden by default, toggled open, searchable, sortable by
-// clicking a header. This is the progressive-disclosure fix for density —
-// the data is all still here, just not forced on screen at once.
 const toggleBtn = document.getElementById('toggle-table');
 const tableWrap = document.getElementById('table-wrap');
 document.getElementById('toggle-count').textContent = DATA.nTotal;
@@ -397,7 +423,7 @@ let tableOpen = false;
 toggleBtn.addEventListener('click', () => {{
   tableOpen = !tableOpen;
   tableWrap.style.display = tableOpen ? 'block' : 'none';
-  toggleBtn.textContent = tableOpen ? 'Hide table' : `Show all ${{DATA.nTotal}} credits`;
+  toggleBtn.textContent = tableOpen ? 'Hide register' : `Show all ${{DATA.nTotal}} credits`;
 }});
 
 let currentSort = {{ key: 'combined_zscore', dir: 1 }};
@@ -438,20 +464,17 @@ document.querySelectorAll('#ranked-table th[data-key]').forEach(th => {{
   }});
 }});
 
-Chart.defaults.color = '#9BA89E';
-Chart.defaults.font.family = "'IBM Plex Mono', monospace";
-Chart.defaults.borderColor = '#2E3F34';
+Chart.defaults.color = '#5B6259';
+Chart.defaults.font.family = "'Martian Mono', monospace";
+Chart.defaults.borderColor = '#C7CDBE';
 
 if (typeof Chart === 'undefined') {{
-  // CDN blocked (corporate firewall, offline, etc.) — the table and stats above
-  // still work since they don't depend on Chart.js; just skip chart rendering
-  // and say so, rather than leaving three blank canvases with no explanation.
   document.querySelectorAll('.chart-box').forEach(box => {{
-    box.innerHTML = '<p style="color:var(--text-muted)">Chart could not load (Chart.js CDN unreachable). Table and figures above are unaffected.</p>';
+    box.innerHTML = '<p style="color:var(--ink-muted)">Chart could not load (Chart.js CDN unreachable). Register and figures above are unaffected.</p>';
   }});
 }} else {{
 
-const registryColors = ['#7FA88C', '#C97452', '#A89B7E', '#6B8FA3', '#B08FA8'];
+const registryColors = ['#2F6B4F', '#B23A2A', '#8A7440', '#5B7A94', '#8A5B7A'];
 new Chart(document.getElementById('chart-registry'), {{
   type: 'bar',
   data: {{
@@ -474,7 +497,7 @@ new Chart(document.getElementById('chart-fit'), {{
     datasets: [{{
       label: 'Credits',
       data: DATA.charts.actualVsPredicted.actual.map((a, i) => ({{ x: DATA.charts.actualVsPredicted.predicted[i], y: a }})),
-      backgroundColor: '#7FA88C',
+      backgroundColor: '#2F6B4F',
     }}]
   }},
   options: {{
@@ -501,7 +524,7 @@ new Chart(document.getElementById('chart-residuals'), {{
       counts[idx]++;
     }});
     const labels = counts.map((_, i) => (min + i * width).toFixed(2));
-    return {{ labels, datasets: [{{ label: 'Residuals', data: counts, backgroundColor: '#A89B7E' }}] }};
+    return {{ labels, datasets: [{{ label: 'Residuals', data: counts, backgroundColor: '#8A7440' }}] }};
   }})(),
   options: {{ plugins: {{ legend: {{ display: false }} }} }}
 }});
